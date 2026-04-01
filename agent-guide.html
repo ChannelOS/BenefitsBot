@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnBenefits — Agent Guide</title>
+<style>
+:root {
+  --primary: #000000;
+  --accent: #22c55e;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --gray: #6b7280;
+  --light: #e5e7eb;
+  --dark: #111827;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--dark); }
+
+.hero { background: var(--primary); color: white; padding: 56px 40px; text-align: center; }
+.hero-badge { display: inline-block; background: var(--accent); color: #000; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+.hero h1 { font-size: 38px; font-weight: 900; line-height: 1.2; margin-bottom: 12px; }
+.hero h1 span { color: var(--accent); }
+.hero p { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+.sticky-nav { background: white; border-bottom: 2px solid var(--light); position: sticky; top: 0; z-index: 100; padding: 0 32px; display: flex; gap: 0; overflow-x: auto; }
+.nav-pill { padding: 15px 18px; font-size: 13px; font-weight: 700; color: var(--gray); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; text-decoration: none; display: block; transition: all 0.15s; }
+.nav-pill:hover, .nav-pill.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.section { max-width: 860px; margin: 0 auto; padding: 56px 24px; }
+.section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
+.section h2 { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+.section > p { font-size: 15px; color: var(--gray); line-height: 1.7; margin-bottom: 28px; max-width: 660px; }
+hr { border: none; border-top: 2px solid var(--light); }
+
+/* CARDS */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 24px 0; }
+.card { background: white; border: 1px solid var(--light); border-radius: 14px; padding: 22px; }
+.card .icon { font-size: 30px; margin-bottom: 12px; }
+.card h3 { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 7px; }
+.card p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+/* STEPS */
+.steps { margin: 24px 0; }
+.step { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--light); }
+.step:last-child { border-bottom: none; }
+.step-num { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+.step-body h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+.step-body p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+.tip { font-size: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 9px 13px; margin-top: 9px; color: #15803d; line-height: 1.5; }
+.warn { font-size: 12px; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 13px; margin-top: 9px; color: #92400e; line-height: 1.5; }
+
+/* FLOW */
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 24px 0; }
+.flow-box { background: white; border: 2px solid var(--light); border-radius: 10px; padding: 12px 16px; text-align: center; min-width: 100px; }
+.flow-box .fb-icon { font-size: 22px; margin-bottom: 4px; }
+.flow-box .fb-label { font-size: 11px; font-weight: 700; color: var(--primary); }
+.flow-box .fb-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
+.flow-box.highlight { border-color: var(--accent); background: #f0fdf4; }
+.flow-arrow { font-size: 18px; color: #d1d5db; }
+
+/* CALLOUT */
+.callout { background: var(--primary); color: white; border-radius: 14px; padding: 26px 30px; margin: 28px 0; display: flex; gap: 18px; align-items: flex-start; }
+.callout .ci { font-size: 34px; flex-shrink: 0; }
+.callout h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.callout p { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+.callout a { color: var(--accent); font-weight: 700; text-decoration: none; }
+
+/* SHARE METHODS */
+.share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 24px 0; }
+.share-card { background: white; border: 2px solid var(--light); border-radius: 12px; padding: 18px; }
+.share-card .sh-icon { font-size: 28px; margin-bottom: 10px; }
+.share-card h4 { font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.share-card p { font-size: 12px; color: var(--gray); line-height: 1.5; }
+.share-card .sh-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; background: #dbeafe; color: #1d4ed8; }
+
+/* ADMIN SECTIONS */
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 24px 0; }
+.admin-card { background: white; border-left: 4px solid var(--primary); border-radius: 0 12px 12px 0; padding: 16px 18px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+.admin-card h4 { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+.admin-card p { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+/* WHAT PROSPECT SEES */
+.chat-demo { background: white; border: 2px solid var(--light); border-radius: 16px; overflow: hidden; max-width: 380px; margin: 24px auto; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.chat-header { background: #000; color: white; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.chat-avatar { width: 36px; height: 36px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #000; }
+.chat-header-info h4 { font-size: 13px; font-weight: 700; }
+.chat-header-info p { font-size: 11px; opacity: 0.6; }
+.chat-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.bot-bubble { background: #f3f4f6; border-radius: 0 12px 12px 12px; padding: 10px 14px; font-size: 12px; color: #374151; line-height: 1.5; max-width: 85%; }
+.user-bubble { background: #000; color: white; border-radius: 12px 0 12px 12px; padding: 10px 14px; font-size: 12px; line-height: 1.5; max-width: 75%; align-self: flex-end; }
+.opt-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 16px; }
+.opt-btn { background: white; border: 2px solid #000; border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; color: #000; }
+
+footer { background: var(--primary); color: rgba(255,255,255,0.5); text-align: center; padding: 28px; font-size: 12px; }
+footer strong { color: white; }
+
+@media(max-width:600px){
+  .hero h1 { font-size: 26px; }
+  .section { padding: 36px 16px; }
+  .flow-row { flex-direction: column; align-items: flex-start; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Agent Guide</div>
+  <h1>Your <span>LearnBenefits</span> Widget<br>How to Use It & What to Expect</h1>
+  <p>Everything you need to know to start sending the widget to prospects, what they'll experience, and how to track results.</p>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#what-is-it" class="nav-pill active">What Is It?</a>
+  <a href="#sharing" class="nav-pill">How to Share</a>
+  <a href="#prospect-experience" class="nav-pill">Prospect Experience</a>
+  <a href="#after-completion" class="nav-pill">What Happens Next</a>
+  <a href="#admin" class="nav-pill">Your Dashboard</a>
+  <a href="#tips" class="nav-pill">Tips for Success</a>
+</nav>
+
+<!-- WHAT IS IT -->
+<div class="section" id="what-is-it">
+  <div class="section-label">Overview</div>
+  <h2>Your personal benefits assessment tool</h2>
+  <p>The LearnBenefits Widget is a smart conversational tool your prospects interact with directly. You send them one link — they go through a guided 2-minute benefits assessment, book a virtual consultation with you, and sign a consultation authorization, all without you having to be involved in real time.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon">&#128172;</div>
+      <h3>Conversational Flow</h3>
+      <p>Feels like a chat, not a form. Prospects answer questions one at a time in a natural back-and-forth that keeps them engaged and moving forward.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128197;</div>
+      <h3>Books the Appointment</h3>
+      <p>A Calendly window opens inside the flow. Prospects pick a time that works for them — and they can't move forward until they actually complete the booking.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#9997;</div>
+      <h3>Captures a Signed SOA</h3>
+      <p>After booking, prospects sign a Scope of Appointment authorization directly in the widget. You get a warm, pre-qualified lead who's already committed to a call.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128241;</div>
+      <h3>Alerts You Instantly</h3>
+      <p>The moment a prospect books an appointment through Calendly, you receive a text message with their name, email, appointment time, and the meeting join link.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="ci">&#128279;</div>
+    <div>
+      <h3>Your widget link</h3>
+      <p>This is the one link you share with everyone. Send it in texts, emails, put it in your email signature, post it on social media — wherever your prospects are.<br><br>
+      <a href="https://channelos.github.io/LearnBenefits/" target="_blank">https://channelos.github.io/LearnBenefits/</a></p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- HOW TO SHARE -->
+<div class="section" id="sharing">
+  <div class="section-label">Sharing the Widget</div>
+  <h2>Six ways to get the link in front of prospects</h2>
+  <p>The widget link works anywhere — any device, any browser. Here are the most effective ways to use it.</p>
+
+  <div class="share-grid">
+    <div class="share-card">
+      <div class="sh-tag">High Response</div>
+      <div class="sh-icon">&#128241;</div>
+      <h4>Text Message</h4>
+      <p>Copy a personalized outreach message from the admin Marketing tab, add your widget link, and text it directly to a prospect you just met or want to follow up with.</p>
+    </div>
+    <div class="share-card">
+      <div class="sh-tag">Professional</div>
+      <div class="sh-icon">&#128140;</div>
+      <h4>Email Outreach</h4>
+      <p>Use one of the pre-written email templates in the Marketing tab. Personalize with the prospect's name and company, add your widget link, copy, and send from your email client.</p>
+    </div>
+    <div class="share-card">
+      <div class="sh-tag">Always On</div>
+      <div class="sh-icon">&#128231;</div>
+      <h4>Email Signature</h4>
+      <p>Add the widget link to your email signature with a short line like "See if we're a fit for your company — 2 minutes." Every email you send becomes a touchpoint.</p>
+    </div>
+    <div class="share-card">
+      <div class="sh-tag">Embedded</div>
+      <div class="sh-icon">&#127760;</div>
+      <h4>Your Website</h4>
+      <p>The widget is already embedded on your agency website. Visitors can access it directly without you lifting a finger.</p>
+    </div>
+    <div class="share-card">
+      <div class="sh-tag">Networking</div>
+      <div class="sh-icon">&#128279;</div>
+      <h4>LinkedIn / Social</h4>
+      <p>Use the Social Media tab in admin to copy a ready-made LinkedIn or Facebook post with your widget link already embedded. Post and let it work for you.</p>
+    </div>
+    <div class="share-card">
+      <div class="sh-tag">In Person</div>
+      <div class="sh-icon">&#128247;</div>
+      <h4>QR Code</h4>
+      <p>Generate a free QR code for your widget link at <strong>qr.io</strong> or any free QR generator. Print it on your business card or display at events.</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- PROSPECT EXPERIENCE -->
+<div class="section" id="prospect-experience">
+  <div class="section-label">What Your Prospect Sees</div>
+  <h2>The complete assessment — their view</h2>
+  <p>Here's exactly what happens when someone opens your widget link. The whole thing takes about 2 minutes.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;">
+    <div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Friendly intro from you</h4>
+            <p>The bot greets them with your name and agency, and explains that you help employers offer financially predictable, cost-controlled benefits while giving employees access to better, more affordable coverage. Asks if they have a couple minutes.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Company & role questions</h4>
+            <p>They type their company name, select their role (Owner, HR, CFO, etc.), and choose how many employees the company has.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Current benefits situation</h4>
+            <p>Do they currently offer benefits? Simple yes/no choice that helps you understand where they're starting from.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Benefits interests (multi-select)</h4>
+            <p>They check all the benefits they're interested in — health, dental, vision, life insurance, ICHRA, voluntary benefits. They can select as many as apply.</p>
+            <div class="tip">&#127381; If they select ICHRA, 4 additional questions appear specific to ICHRA — budget, employee count, timeline, and current challenges. You'll have deep info before the call.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>Timeline & contact info</h4>
+            <p>When are they looking to implement? Then their phone number (auto-formats as they type) and business email.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h4>Book a virtual appointment</h4>
+            <p>Your Calendly scheduling window opens. They pick a date and time that works for them. The continue button is <strong>locked</strong> until Calendly confirms the booking — they cannot skip this step.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <h4>Sign the consultation authorization</h4>
+            <p>A digital signature pad appears. They sign their name with their finger or mouse to confirm they've requested a consultation. This is your Scope of Appointment.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--accent);color:#000;">&#10003;</div>
+          <div class="step-body">
+            <h4>You're All Set!</h4>
+            <p>The confirmation screen shows them your name, direct phone number, and email so they know exactly who to expect a call from and how to reach you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="chat-demo">
+        <div class="chat-header">
+          <div class="chat-avatar">J</div>
+          <div class="chat-header-info">
+            <h4>Joe · Channel One Strategies</h4>
+            <p>Benefits Advisor</p>
+          </div>
+        </div>
+        <div class="chat-body">
+          <div class="bot-bubble">Hi! I'm Joe with Channel One Strategies. We've learned how to help employers of all sizes offer <strong>financially predictable, cost-controlled benefits</strong> — while giving employees access to <strong>personalized, higher quality, more affordable coverage</strong>. Can I ask a few quick questions to see if we're a good fit?</div>
+        </div>
+        <div class="opt-row">
+          <div class="opt-btn">Let's get started! →</div>
+        </div>
+        <div class="chat-body" style="padding-top:0;">
+          <div class="bot-bubble">Great! What company do you work for?</div>
+          <div class="user-bubble">Acme Corporation</div>
+          <div class="bot-bubble">And what's your role at Acme Corporation?</div>
+        </div>
+        <div class="opt-row">
+          <div class="opt-btn">Owner / CEO</div>
+          <div class="opt-btn">HR Manager</div>
+          <div class="opt-btn">CFO</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--gray);text-align:center;margin-top:8px;">What your prospect sees on their phone or computer</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- WHAT HAPPENS NEXT -->
+<div class="section" id="after-completion">
+  <div class="section-label">After They Complete It</div>
+  <h2>What happens the moment they finish</h2>
+
+  <div class="flow-row">
+    <div class="flow-box highlight">
+      <div class="fb-icon">&#9997;</div>
+      <div class="fb-label">Prospect Signs</div>
+      <div class="fb-sub">Completes the widget</div>
+    </div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-box">
+      <div class="fb-icon">&#128241;</div>
+      <div class="fb-label">You Get a Text</div>
+      <div class="fb-sub">Name, time, join link</div>
+    </div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-box">
+      <div class="fb-icon">&#128196;</div>
+      <div class="fb-label">Lead Captured</div>
+      <div class="fb-sub">All their answers saved</div>
+    </div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-box">
+      <div class="fb-icon">&#128197;</div>
+      <div class="fb-label">Call Scheduled</div>
+      <div class="fb-sub">In your Calendly</div>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-top:8px;">
+    <div class="card">
+      <div class="icon">&#128241;</div>
+      <h3>SMS Appointment Alert</h3>
+      <p>The moment a prospect books, you receive a text with their name, email, the appointment time in Central Time, and your meeting join link. You'll know immediately — no need to check anything.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128197;</div>
+      <h3>Calendly Confirmation</h3>
+      <p>The prospect also gets a standard Calendly confirmation email with the meeting details and a calendar invite. Calendly handles all reminders automatically.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128100;</div>
+      <h3>Lead in Your Dashboard</h3>
+      <p>Their full profile appears in your admin dashboard — company, role, employee count, which benefits they're interested in, ICHRA details if applicable, phone, and email. Everything you need before the call.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="ci">&#128161;</div>
+    <div>
+      <h3>Before your call — review their answers</h3>
+      <p>Log into your admin dashboard and click <strong>Leads</strong>. Find the prospect and review everything they submitted. You'll already know their company size, what benefits they're interested in, and when they want to implement — so you can walk in prepared instead of starting from scratch.</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ADMIN DASHBOARD -->
+<div class="section" id="admin">
+  <div class="section-label">Your Admin Dashboard</div>
+  <h2>What you can see and do</h2>
+  <p>Your admin dashboard gives you a real-time view of every prospect who's gone through the widget. Here's what each section shows you.</p>
+
+  <div class="admin-grid">
+    <div class="admin-card">
+      <h4>&#9632; Overview</h4>
+      <p>Your at-a-glance numbers: total leads captured, signed authorizations, and appointments booked. A live feed of your most recent prospects.</p>
+    </div>
+    <div class="admin-card">
+      <h4>&#128100; Leads</h4>
+      <p>Full table of every prospect who completed the widget. Filter by status: All, New, Signed, Hot, or ICHRA. See their company, role, interests, phone, and email at a glance.</p>
+    </div>
+    <div class="admin-card">
+      <h4>&#128197; Appointments</h4>
+      <p>Every booked consultation in one list. Shows prospect name, company, booking time, and contact info. Your complete appointment history.</p>
+    </div>
+    <div class="admin-card">
+      <h4>&#128227; Marketing Tools</h4>
+      <p>Pre-written outreach templates (email, text, LinkedIn), your prospect list with message tracking, and social media post templates — all with your widget link built in.</p>
+    </div>
+  </div>
+
+  <div class="steps" style="margin-top:32px;">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>How to use Marketing Templates</h4>
+        <p>Go to Marketing → Templates tab. Type the prospect's first name and company in the fields at the top. Click any template to preview it with their name filled in. Click <strong>Add Widget Link</strong> — then Copy Message. Paste directly into your text or email.</p>
+        <div class="tip">&#9989; You must click "Add Widget Link" before the Copy button activates. This ensures you never accidentally send a message without your booking link.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>How to use the Prospect List</h4>
+        <p>Go to Marketing → Prospect List tab. If you have a spreadsheet of contacts, save it as a CSV (Name, Company, Phone, Email columns) and upload it. Then select a prospect from the dropdown, choose a message type, add widget link, and copy. The system logs every message you send so you never double-message someone.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>How to use Social Media Posts</h4>
+        <p>Go to Marketing → Social Media tab. Your profile links are saved there. On the right, you'll see a ready-made post for each platform. Click Add Widget Link, then Copy Post — paste directly into LinkedIn, Facebook, Instagram, or X.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- TIPS -->
+<div class="section" id="tips">
+  <div class="section-label">Tips for Success</div>
+  <h2>Getting the most out of the widget</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon">&#128172;</div>
+      <h3>Send with context</h3>
+      <p>A personalized text or email before the link performs far better than a cold link drop. Use the Marketing templates — they're written to get opens and clicks.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128336;</div>
+      <h3>Follow up fast</h3>
+      <p>When you get the appointment text alert, confirm in your own calendar right away. Prospects who book through the widget are warm — don't let momentum cool off.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128203;</div>
+      <h3>Review before every call</h3>
+      <p>Check their Lead entry in the dashboard before the consultation. Their answers tell you exactly what to focus on — you'll sound like you've known them for weeks.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#9994;</div>
+      <h3>Don't pitch — listen</h3>
+      <p>The widget already pre-qualifies them. By the time you're on a call, they've self-identified their needs. Your job is to listen, confirm, and present options — not sell from scratch.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128231;</div>
+      <h3>Add it to your signature</h3>
+      <p>Every email you send is an opportunity. A simple "See if we're a fit — 2 minutes" with your widget link at the bottom of every email works quietly in the background.</p>
+    </div>
+    <div class="card">
+      <div class="icon">&#128101;</div>
+      <h3>Use your prospect list</h3>
+      <p>Upload your existing contacts as a CSV into the Prospect List tab. Work through them systematically — the tracker shows who you've messaged, when, and with what type of outreach.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:32px;">
+    <div class="ci">&#128222;</div>
+    <div>
+      <h3>Questions or issues?</h3>
+      <p>Reach out to your Channel One Strategies administrator directly. Joe is managing the backend and settings — if anything looks off with the widget or your dashboard, get in touch.<br><br>
+      <a href="mailto:joe@channelonestrategies.com">joe@channelonestrategies.com</a> &nbsp;·&nbsp; <a href="tel:2177221385">(217) 722-1385</a></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>LearnBenefits — Powered by Channel One Strategies</strong><br>
+  <span style="margin-top:6px;display:block;">Questions? Contact joe@channelonestrategies.com</span>
+</footer>
+
+<script>
+var sections = document.querySelectorAll('.section[id]');
+var pills = document.querySelectorAll('.nav-pill');
+window.addEventListener('scroll', function(){
+  var scroll = window.scrollY + 120;
+  sections.forEach(function(s){
+    if(scroll >= s.offsetTop && scroll < s.offsetTop + s.offsetHeight){
+      pills.forEach(function(p){ p.classList.remove('active'); });
+      var match = document.querySelector('.nav-pill[href="#'+s.id+'"]');
+      if(match) match.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>
