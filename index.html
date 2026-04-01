@@ -189,6 +189,7 @@ var SETTINGS_KEY = 'bb_settings';
 function getSettings() {
   try {
     return Object.assign({
+      /*WIDGET_DEFAULTS_START*/
       agency: 'Channel One Strategies',
       agent: 'Joe',
       agentPhone: '(217) 722-1385',
@@ -196,6 +197,7 @@ function getSettings() {
       tagline: 'Group Benefits & Insurance Advisor',
       colorPrimary: '#000000', colorAccent: '#ffffff', logo: '',
       calendlyVirtual: 'https://calendly.com/joe-channelonestrategies/free-insurance-consultation',
+      /*WIDGET_DEFAULTS_END*/
     }, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'));
   } catch(e) { return {}; }
 }

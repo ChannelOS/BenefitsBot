@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnBenefits — Feature Guide</title>
+<style>
+:root {
+  --primary: #000000;
+  --accent: #22c55e;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --gray: #6b7280;
+  --light: #e5e7eb;
+  --dark: #111827;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--dark); }
+
+/* HERO */
+.hero { background: var(--primary); color: white; padding: 60px 40px; text-align: center; }
+.hero-badge { display: inline-block; background: var(--accent); color: #000; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+.hero h1 { font-size: 42px; font-weight: 900; line-height: 1.15; margin-bottom: 14px; }
+.hero h1 span { color: var(--accent); }
+.hero p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
+.hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.hero-btn { padding: 13px 28px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.15s; }
+.hero-btn-primary { background: var(--accent); color: #000; }
+.hero-btn-outline { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; }
+.hero-btn:hover { transform: translateY(-2px); }
+
+/* NAV */
+.sticky-nav { background: white; border-bottom: 1px solid var(--light); position: sticky; top: 0; z-index: 100; padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+.nav-pill { padding: 16px 20px; font-size: 13px; font-weight: 700; color: var(--gray); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; text-decoration: none; display: block; transition: all 0.15s; }
+.nav-pill:hover, .nav-pill.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* SECTIONS */
+.section { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+.section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
+.section h2 { font-size: 30px; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
+.section > p { font-size: 15px; color: var(--gray); line-height: 1.7; margin-bottom: 32px; max-width: 680px; }
+
+/* FLOW */
+.flow { display: flex; gap: 0; align-items: stretch; margin: 32px 0; flex-wrap: wrap; }
+.flow-step { flex: 1; min-width: 140px; background: white; border: 2px solid var(--light); border-radius: 12px; padding: 20px 16px; text-align: center; position: relative; margin: 4px; }
+.flow-step .num { width: 32px; height: 32px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; margin: 0 auto 10px; }
+.flow-step .icon { font-size: 28px; margin-bottom: 8px; }
+.flow-step h4 { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.flow-step p { font-size: 11px; color: var(--gray); line-height: 1.5; }
+.flow-arrow { display: flex; align-items: center; font-size: 22px; color: var(--light); padding: 0 4px; align-self: center; }
+
+/* FEATURE CARDS */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin: 32px 0; }
+.feature-card { background: white; border: 1px solid var(--light); border-radius: 14px; padding: 24px; transition: box-shadow 0.15s; }
+.feature-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.feature-card .fc-icon { font-size: 32px; margin-bottom: 14px; }
+.feature-card h3 { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+.feature-card p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+.feature-card .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-bottom: 12px; }
+.tag-widget { background: #dbeafe; color: #1d4ed8; }
+.tag-admin { background: #d1fae5; color: #065f46; }
+.tag-both { background: #fef3c7; color: #92400e; }
+
+/* STEPS LIST */
+.steps { margin: 28px 0; }
+.step-item { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--light); }
+.step-item:last-child { border-bottom: none; }
+.step-num { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+.step-body h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.step-body p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+.step-body .tip { font-size: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; margin-top: 8px; color: #15803d; }
+.step-body .warn { font-size: 12px; background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 12px; margin-top: 8px; color: #92400e; }
+
+/* SCREEN MOCKUP */
+.mockup { background: white; border: 2px solid var(--light); border-radius: 16px; overflow: hidden; margin: 28px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.mockup-bar { background: #f3f4f6; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--light); }
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot.r { background: #ef4444; }
+.mockup-dot.y { background: #f59e0b; }
+.mockup-dot.g { background: #22c55e; }
+.mockup-url { flex: 1; background: white; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--gray); font-family: monospace; }
+.mockup-body { padding: 24px; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 2px solid var(--light); margin: 0; }
+
+/* CALLOUT */
+.callout { background: var(--primary); color: white; border-radius: 14px; padding: 28px 32px; margin: 32px 0; display: flex; gap: 20px; align-items: flex-start; }
+.callout .co-icon { font-size: 36px; flex-shrink: 0; }
+.callout h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+.callout p { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+.callout a { color: var(--accent); font-weight: 700; }
+
+/* ADMIN SECTIONS */
+.admin-tab-list { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+.admin-tab { background: var(--primary); color: white; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
+/* FOOTER */
+footer { background: var(--primary); color: rgba(255,255,255,0.5); text-align: center; padding: 32px; font-size: 12px; }
+footer strong { color: white; }
+
+@media(max-width:640px){
+  .hero h1 { font-size: 28px; }
+  .flow { flex-direction: column; }
+  .flow-arrow { display: none; }
+  .section { padding: 40px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Feature Guide</div>
+  <h1>LearnBenefits <span>Bot</span><br>Everything You Need to Know</h1>
+  <p>A complete walkthrough of the prospect-facing widget and the agent admin dashboard — how they work, what each feature does, and how to use them.</p>
+  <div class="hero-btns">
+    <a href="https://channelos.github.io/LearnBenefits/" target="_blank" class="hero-btn hero-btn-primary">&#9654; Open Widget</a>
+    <a href="https://channelos.github.io/LearnBenefits/benefitsbot-admin.html" target="_blank" class="hero-btn hero-btn-outline">&#9881; Open Admin</a>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="#overview" class="nav-pill active">Overview</a>
+  <a href="#widget-flow" class="nav-pill">Widget Flow</a>
+  <a href="#widget-features" class="nav-pill">Widget Features</a>
+  <a href="#admin-overview" class="nav-pill">Admin Overview</a>
+  <a href="#settings" class="nav-pill">Settings & Export</a>
+  <a href="#marketing" class="nav-pill">Marketing Tools</a>
+  <a href="#leads" class="nav-pill">Leads & Appointments</a>
+  <a href="#workflow" class="nav-pill">Your Workflow</a>
+</nav>
+
+<!-- OVERVIEW -->
+<div class="section" id="overview">
+  <div class="section-label">What Is This?</div>
+  <h2>Two tools. One seamless prospect experience.</h2>
+  <p>LearnBenefits consists of two connected tools: a <strong>prospect-facing widget</strong> that guides potential clients through a benefits assessment, and an <strong>agent admin dashboard</strong> that lets you manage settings, leads, and marketing — all in one place.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="fc-icon">&#128172;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>The Benefits Bot Widget</h3>
+      <p>A conversational chat interface your prospects interact with. Collects their company info, benefits interests, books a Calendly appointment, and captures a signed consultation authorization — all in one smooth flow.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128736;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>The Agent Admin Dashboard</h3>
+      <p>Your control center. Customize branding, manage your Calendly link, view leads and appointments, send outreach messages, manage your prospect list, and export a configured version of the widget for any agency.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128279;</div>
+      <span class="tag tag-both">Connected</span>
+      <h3>Settings Flow Through</h3>
+      <p>When you save settings in the admin and export the widget, your branding, agent info, and Calendly link are baked directly into the widget file — ensuring every prospect on every device sees the right info.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="co-icon">&#128161;</div>
+    <div>
+      <h3>How they stay in sync</h3>
+      <p>Both tools are hosted on GitHub Pages at <a href="https://channelos.github.io/LearnBenefits/" target="_blank">channelos.github.io/LearnBenefits/</a>. When you update settings in the admin and click <strong>Export &amp; Download Widget</strong>, your settings are baked into a new <code>index.html</code> file. Upload that file to GitHub and every visitor instantly gets the updated widget — on any device, anywhere.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WIDGET FLOW -->
+<div class="section" id="widget-flow">
+  <div class="section-label">Widget</div>
+  <h2>The prospect's journey — step by step</h2>
+  <p>When a prospect receives your widget link and opens it, they go through a guided conversational flow. Here's every step in order.</p>
+
+  <div class="flow">
+    <div class="flow-step"><div class="icon">&#128075;</div><h4>Intro</h4><p>Agent greeting with value prop about predictable, cost-controlled benefits</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#127970;</div><h4>Company</h4><p>What company do you work for?</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128100;</div><h4>Role</h4><p>What's your role at the company?</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128101;</div><h4>Employees</h4><p>How many employees does the company have?</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128203;</div><h4>Current Benefits</h4><p>Does the company currently offer benefits?</p></div>
+  </div>
+  <div class="flow">
+    <div class="flow-step"><div class="icon">&#9989;</div><h4>Interests</h4><p>Multi-select: which benefits are you interested in? (select all that apply)</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step" style="border-color:#fbbf24;background:#fffbeb;"><div class="icon">&#127381;</div><h4>ICHRA Path</h4><p>If ICHRA selected: 4 extra questions about budget, employees, timeline, challenges</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128336;</div><h4>Timeline</h4><p>When are you looking to implement benefits?</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128222;</div><h4>Phone</h4><p>Auto-formats as (555) 555-5555 as they type</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#128140;</div><h4>Email</h4><p>Business email — triggers lead capture to backend &amp; HubSpot</p></div>
+  </div>
+  <div class="flow">
+    <div class="flow-step"><div class="icon">&#128197;</div><h4>Appointment</h4><p>Calendly popup opens. Button stays locked until booking is confirmed by Calendly</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step"><div class="icon">&#9997;</div><h4>Consent / Sign</h4><p>Canvas signature pad — prospect signs the SOA consultation authorization</p></div>
+    <div class="flow-arrow">&#8594;</div>
+    <div class="flow-step" style="border-color:#22c55e;background:#f0fdf4;"><div class="icon">&#127881;</div><h4>You're All Set!</h4><p>Confirmation screen with agent name, phone, and email</p></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WIDGET FEATURES -->
+<div class="section" id="widget-features">
+  <div class="section-label">Widget Features</div>
+  <h2>What makes the widget smart</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="fc-icon">&#127381;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>ICHRA Smart Branch</h3>
+      <p>If a prospect selects ICHRA in the benefits interest step, the widget automatically activates 4 additional questions specific to ICHRA — budget, employee count, timeline, and current challenges. Non-ICHRA prospects skip these entirely.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#9989;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>Multi-Select Interests</h3>
+      <p>Prospects can select as many benefits interests as apply — health, dental, vision, life, ICHRA, voluntary — using checkboxes with a "Select All" option. All selections are captured and sent to HubSpot.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128222;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>Phone Auto-Format</h3>
+      <p>As the prospect types their phone number, it automatically formats to (555) 555-5555. No parentheses or dashes needed — the widget handles it in real time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128197;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>Calendly Lock</h3>
+      <p>The "continue" button on the booking step is disabled and grayed out until Calendly fires a real booking confirmation event. Prospects cannot skip or bypass the appointment — they must actually complete a booking.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#9997;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>Canvas Signature</h3>
+      <p>A digital signature pad lets prospects sign the Scope of Appointment (SOA) consultation authorization directly in the browser. The signature is captured and submitted with the lead data.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128100;</div>
+      <span class="tag tag-widget">Widget</span>
+      <h3>Agent Contact on Done Screen</h3>
+      <p>After signing, the "You're All Set" confirmation screen displays your name, direct phone number, and email — pulled from your admin settings — so prospects know exactly who to expect a call from.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ADMIN OVERVIEW -->
+<div class="section" id="admin-overview">
+  <div class="section-label">Admin Dashboard</div>
+  <h2>Your control center — 6 sections</h2>
+  <p>Access the admin at <strong>channelos.github.io/LearnBenefits/benefitsbot-admin.html</strong> using your password. The dashboard has six pages accessible from the left sidebar.</p>
+
+  <div class="admin-tab-list">
+    <span class="admin-tab">&#9632; Overview</span>
+    <span class="admin-tab">&#128100; Leads</span>
+    <span class="admin-tab">&#128197; Appointments</span>
+    <span class="admin-tab">&#128227; Marketing</span>
+    <span class="admin-tab">&#9881; Settings</span>
+    <span class="admin-tab">&#128279; Integrations</span>
+  </div>
+
+  <div class="feature-grid" style="margin-top:24px;">
+    <div class="feature-card">
+      <div class="fc-icon">&#9632;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Overview</h3>
+      <p>At-a-glance stats: total leads, signed SOAs, appointments booked. Shows your recent leads table and quick access to the widget link.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128100;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Leads</h3>
+      <p>Full table of all captured leads with filter chips (All, New, Signed, Hot, ICHRA). Each row shows company, role, interests, phone, email, appointment type, and status.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128197;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Appointments</h3>
+      <p>Tracks all booked consultations with prospect name, company, type, phone, email, and booking time. Stats show total booked and virtual count.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128227;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Marketing Tools</h3>
+      <p>Three tabs: Templates (6 outreach messages), Prospect List (CSV upload + message history tracking), and Social Media (platform-specific post templates). All require adding your widget link before copying.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#9881;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Settings</h3>
+      <p>10 numbered fields: logo, colors, agency name, agent name, phone, email, tagline, Calendly link, and widget link. Save settings locally, then Export &amp; Download Widget to push changes live.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128279;</div>
+      <span class="tag tag-admin">Admin</span>
+      <h3>Integrations</h3>
+      <p>Live status of your backend connections — Twilio SMS, HubSpot CRM, Calendly webhook. Shows green/yellow/red status for each. Backend URL configuration.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SETTINGS & EXPORT -->
+<div class="section" id="settings">
+  <div class="section-label">Settings &amp; Export</div>
+  <h2>How to update settings and push them live</h2>
+  <p>This is the most important workflow to understand. Changes saved in the admin only go live for all visitors when you export and re-upload the widget file.</p>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open the admin dashboard</h4>
+        <p>Go to <strong>channelos.github.io/LearnBenefits/benefitsbot-admin.html</strong> and log in with your password. Always use this hosted URL — not a local file on your computer.</p>
+        <div class="tip">&#9989; Using the hosted URL ensures the admin and widget share the same domain, which is required for the Export feature to work.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Go to Settings and make your changes</h4>
+        <p>Update any of the 10 fields: logo, primary color, accent color, agency name, agent name, phone, email, tagline, Calendly link, or widget link. Reference the Field Reference Guide on the right side of the Settings page.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Click "Save All Settings"</h4>
+        <p>This saves your settings to the browser so the preview and marketing tools reflect your info immediately.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Click "Export &amp; Download Widget"</h4>
+        <p>This generates a customized <code>index.html</code> file with all your settings permanently baked in — Calendly link, logo, colors, agent info, everything. Your browser downloads it automatically.</p>
+        <div class="tip">&#9989; This is the key step. Without exporting and uploading, your settings won't appear for prospects on other devices.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Upload index.html to GitHub</h4>
+        <p>Go to <strong>github.com/ChannelOS/LearnBenefits</strong>. Click on <code>index.html</code> in the file list, click the pencil (edit) icon, then click the three dots &#8943; menu and choose <strong>Delete file</strong>. Commit. Then click <strong>Add file → Upload files</strong>, upload your new <code>index.html</code>, and commit again.</p>
+        <div class="warn">&#9203; GitHub Pages takes about 60 seconds to update after you commit. Refresh the widget link after a minute to see your changes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- MARKETING TOOLS -->
+<div class="section" id="marketing">
+  <div class="section-label">Marketing Tools</div>
+  <h2>Three ways to reach prospects</h2>
+  <p>The Marketing section has three tabs. Every message requires you to click <strong>Add Widget Link</strong> before you can copy — this ensures you never accidentally send a message without your booking link.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="fc-icon">&#128203;</div>
+      <span class="tag tag-admin">Templates Tab</span>
+      <h3>Outreach Templates</h3>
+      <p>6 pre-written messages (email, SMS, LinkedIn) with language matching the widget intro — "financially predictable, cost-controlled benefits." Enter a prospect's first name and company to personalize, then add your widget link and copy. Includes a Generic message that requires no name.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128101;</div>
+      <span class="tag tag-admin">Prospect List Tab</span>
+      <h3>Prospect List</h3>
+      <p>Upload a CSV (columns: Name, Company, Phone, Email). New uploads merge into your master list — no duplicates. Select a prospect from the dropdown, choose a message type, add widget link, copy. Every message sent is tracked with date, time, and type in the prospect table.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128241;</div>
+      <span class="tag tag-admin">Social Media Tab</span>
+      <h3>Social Posts</h3>
+      <p>Save your LinkedIn, Facebook, Instagram, and X/Twitter profile URLs. Ready-made posts for each platform use the same benefits messaging. Add your widget link and copy the post — ready to paste directly into each platform.</p>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-bar">
+      <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+      <div class="mockup-url">Admin → Marketing → Prospect List</div>
+    </div>
+    <div class="mockup-body">
+      <p style="font-size:13px;color:var(--gray);margin-bottom:16px;"><strong>How the prospect list workflow goes:</strong></p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div style="background:#f3f4f6;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;">&#11014; Upload CSV</div>
+        <span style="color:#9ca3af;">&#8594;</span>
+        <div style="background:#f3f4f6;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;">Select Prospect</div>
+        <span style="color:#9ca3af;">&#8594;</span>
+        <div style="background:#f3f4f6;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;">Choose Message</div>
+        <span style="color:#9ca3af;">&#8594;</span>
+        <div style="background:#000;color:white;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;">&#128279; Add Widget Link</div>
+        <span style="color:#9ca3af;">&#8594;</span>
+        <div style="background:#22c55e;color:#000;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;">&#128203; Copy &amp; Send</div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin-top:14px;">Each copy action is logged in the prospect table — you'll always know who got what message and when.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- LEADS & APPOINTMENTS -->
+<div class="section" id="leads">
+  <div class="section-label">Leads &amp; Appointments</div>
+  <h2>Where prospect data goes</h2>
+  <p>Every time a prospect completes the widget flow, their information flows to multiple places simultaneously.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="fc-icon">&#128196;</div>
+      <span class="tag tag-both">Backend</span>
+      <h3>Vercel Backend API</h3>
+      <p>The widget sends lead data to your Vercel serverless backend the moment the prospect enters their email. This is the primary capture point — it works regardless of what device the prospect is on.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#127760;</div>
+      <span class="tag tag-both">CRM</span>
+      <h3>HubSpot CRM</h3>
+      <p>Every lead is automatically upserted as a HubSpot contact with their company, role, interests, phone, and email. A timeline note is added with all the details from the assessment. No manual data entry needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">&#128241;</div>
+      <span class="tag tag-both">SMS</span>
+      <h3>Calendly SMS Alerts</h3>
+      <p>When a prospect books through Calendly, the Calendly webhook fires an SMS to your phone via Twilio — includes the prospect's name, email, event name, time (Central), and the join URL. Works 100% reliably regardless of the widget.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="co-icon">&#128161;</div>
+    <div>
+      <h3>Where to check your real leads</h3>
+      <p>The admin dashboard's Leads and Appointments pages show leads captured in the same browser — useful for testing. Your <strong>real lead data</strong> lives in <strong>HubSpot</strong>, and your <strong>appointment alerts</strong> come via <strong>SMS from the Calendly webhook</strong>. Check those for production use.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WORKFLOW -->
+<div class="section" id="workflow">
+  <div class="section-label">Daily Workflow</div>
+  <h2>How to use this day-to-day</h2>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Set up once — then it runs itself</h4>
+        <p>Go to Settings, fill in all 10 fields, save, export the widget, upload to GitHub. That's your one-time setup. After that the widget is live at your link.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Send the widget link to prospects</h4>
+        <p>Use the Marketing tab to copy a personalized message, add your widget link, and text or email it. Or drop it in social posts. The prospect clicks the link and goes through the bot on their own.</p>
+        <div class="tip">&#9989; Your widget link: <strong>channelos.github.io/LearnBenefits/</strong></div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Get notified when they book</h4>
+        <p>You receive an SMS the moment a prospect books through Calendly — their name, time, and meeting join link. No need to check the admin for appointments.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Check HubSpot for lead details</h4>
+        <p>All their assessment answers — company, role, employee count, interests, ICHRA details — are in HubSpot as a contact with a timeline note. Review before the call.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Update settings anytime</h4>
+        <p>Change your Calendly link, update your photo, new tagline? Go to Settings → update → Save → Export &amp; Download Widget → upload to GitHub. Takes about 3 minutes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>LearnBenefits — Built by Channel One Strategies</strong><br>
+  <span style="margin-top:6px;display:block;">Powered by Vercel · HubSpot · Calendly · Twilio · GitHub Pages</span>
+</footer>
+
+<script>
+// Highlight active nav pill on scroll
+var sections = document.querySelectorAll('.section[id]');
+var pills = document.querySelectorAll('.nav-pill');
+window.addEventListener('scroll', function(){
+  var scroll = window.scrollY + 100;
+  sections.forEach(function(s){
+    if(scroll >= s.offsetTop && scroll < s.offsetTop + s.offsetHeight){
+      pills.forEach(function(p){ p.classList.remove('active'); });
+      var match = document.querySelector('.nav-pill[href="#'+s.id+'"]');
+      if(match) match.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>

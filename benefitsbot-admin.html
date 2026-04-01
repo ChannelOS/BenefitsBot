@@ -501,7 +501,11 @@ tr:hover td { background: #fafbfc; }
         </div>
       </div>
     </div>
-    <button class="btn btn-accent" style="padding:13px 36px;font-size:15px;" onclick="saveSettings()">Save All Settings</button>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px;">
+      <button class="btn btn-accent" style="padding:13px 36px;font-size:15px;" onclick="saveSettings()">Save All Settings</button>
+      <button class="btn btn-primary" style="padding:13px 36px;font-size:15px;" onclick="exportWidget()">&#11015; Export &amp; Download Widget</button>
+      <span style="font-size:12px;color:var(--gray);max-width:340px;line-height:1.5;">After saving, click <strong>Export &amp; Download Widget</strong> to get a customized <code>index.html</code> with your settings baked in — then upload it to GitHub to update the live widget.</span>
+    </div>
   </div>
 
   <!-- INTEGRATIONS PAGE -->
@@ -578,6 +582,57 @@ function saveSettings() {
 function saveApiBase() {
   var v=document.getElementById('sApiBase').value;
   if(v) { localStorage.setItem(API_KEY,v); checkIntegrations(); notify('API URL saved — testing connection...','ok'); }
+}
+function exportWidget() {
+  // Gather current settings from the form (same as saveSettings but without persisting)
+  var lp = document.getElementById('logoPrev');
+  var s = {
+    agency:       document.getElementById('sAgency').value || 'My Agency',
+    agent:        document.getElementById('sAgent').value || 'Advisor',
+    agentPhone:   document.getElementById('sAgentPhone').value || '',
+    agentEmail:   document.getElementById('sAgentEmail').value || '',
+    tagline:      document.getElementById('sTagline').value || 'Benefits Advisor',
+    colorPrimary: document.getElementById('cPrimary').value,
+    colorAccent:  document.getElementById('cAccent').value,
+    logo:         (lp.src && lp.src.startsWith('data:')) ? lp.src : '',
+    calendlyVirtual: document.getElementById('sCalVirtual').value,
+  };
+  // Escape single quotes for safe embedding in JS string
+  function esc(v){ return (v||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+  // Build the replacement defaults block
+  var block = "      /*WIDGET_DEFAULTS_START*/\n" +
+    "      agency: '" + esc(s.agency) + "',\n" +
+    "      agent: '" + esc(s.agent) + "',\n" +
+    "      agentPhone: '" + esc(s.agentPhone) + "',\n" +
+    "      agentEmail: '" + esc(s.agentEmail) + "',\n" +
+    "      tagline: '" + esc(s.tagline) + "',\n" +
+    "      colorPrimary: '" + esc(s.colorPrimary) + "', colorAccent: '" + esc(s.colorAccent) + "', logo: '" + esc(s.logo) + "',\n" +
+    "      calendlyVirtual: '" + esc(s.calendlyVirtual) + "',\n" +
+    "      /*WIDGET_DEFAULTS_END*/";
+  // Fetch the widget HTML from the same origin
+  fetch('index.html')
+    .then(function(r){
+      if(!r.ok) throw new Error('Could not fetch index.html — make sure this admin is hosted alongside index.html on GitHub Pages.');
+      return r.text();
+    })
+    .then(function(html){
+      // Replace the defaults block between the markers
+      var updated = html.replace(/\/\*WIDGET_DEFAULTS_START\*\/[\s\S]*?\/\*WIDGET_DEFAULTS_END\*\//, block);
+      if(updated === html){ notify('Could not find the settings markers in index.html. Re-upload the latest index.html to GitHub first.','err'); return; }
+      // Trigger download
+      var blob = new Blob([updated], {type:'text/html;charset=utf-8'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      notify('Widget downloaded! Upload index.html to GitHub to go live. ✅','ok');
+    })
+    .catch(function(err){
+      notify('Export failed: ' + err.message,'err');
+    });
 }
 function copyWidgetLink() {
   var v = document.getElementById('sWidgetLink').value.trim();
