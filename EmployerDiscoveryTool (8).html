@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Channel One Strategies — Employer Discovery Tool</title>
+<style>
+  :root {
+    --green:#0ACE0A; --green-dk:#08a008; --black:#000;
+    --white:#fff; --g50:#f9f9f9; --g100:#f0f0f0; --g200:#e0e0e0;
+    --g400:#999; --g500:#777; --g600:#555; --g800:#222;
+    --amber:#F5A623; --blue:#4A90D9; --purple:#9B59B6;
+    --r:8px; --rl:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:#efefef;color:var(--g800);min-height:100vh;padding:1.5rem 1rem 3rem}
+  #app{max-width:960px;margin:0 auto}
+
+  /* Header */
+  .hdr{background:var(--green);border-radius:var(--rl) var(--rl) 0 0;padding:11px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .hdr-brand{font-weight:700;font-size:14px;color:#000;white-space:nowrap}
+  .hdr-div{border-left:1px solid rgba(0,0,0,.2);padding-left:12px;font-size:11px;color:rgba(0,0,0,.6);white-space:nowrap}
+  .hdr-inp{flex:1 1 140px;min-width:110px;padding:6px 10px;font-size:13px;background:rgba(255,255,255,.9);border:none;border-radius:6px;color:var(--g800);font-family:inherit}
+  .hdr-inp:focus{outline:none;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+
+  /* Phase tabs */
+  .tabs{display:flex;background:var(--g100);border:1px solid var(--g200);border-top:none}
+  .tab{flex:1;padding:9px 4px;background:transparent;border:none;border-right:1px solid var(--g200);cursor:pointer;text-align:center}
+  .tab:last-child{border-right:none}
+  .tab.on{background:var(--white);border-bottom:2.5px solid var(--green)}
+  .tab-dot{width:27px;height:27px;border-radius:50%;background:var(--g200);border:1px solid var(--g300,#ccc);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--g500);margin:0 auto 3px}
+  .tab.on .tab-dot{background:var(--green);border-color:var(--green);color:#000}
+  .tab-lbl{font-size:12px;font-weight:700;color:var(--g500)}
+  .tab.on .tab-lbl{color:var(--g800)}
+  .tab-sub{font-size:10px;color:var(--g400)}
+
+  /* Panel */
+  .panel{background:var(--white);border:1px solid var(--g200);border-top:none;border-radius:0 0 var(--rl) var(--rl);padding:16px;min-height:440px}
+
+  /* Card */
+  .card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);padding:12px 14px;margin-bottom:11px}
+  .card.gl{border-left:3px solid var(--green)}
+  .card.dk{background:var(--g800)}
+  .card.tint{background:var(--g50)}
+
+  /* Section head */
+  .sh{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;border-bottom:1px solid var(--g100);padding-bottom:5px}
+
+  /* Form */
+  .field{margin-bottom:8px}
+  .lbl{display:block;font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+  .inp{width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--g200);border-radius:6px;background:var(--white);color:var(--g800);font-family:inherit;transition:border-color .15s}
+  .inp:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(10,206,10,.15)}
+  textarea.inp{min-height:64px;resize:vertical}
+  select.inp{cursor:pointer}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+  /* Checklist */
+  .chkrow{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13px;cursor:pointer;border-bottom:1px solid var(--g100);color:var(--g800);user-select:none}
+  .chkrow:last-child{border-bottom:none}
+  .chkrow input[type=checkbox]{width:14px;height:14px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+  .chkrow.done span{text-decoration:line-through;color:var(--g400)}
+
+  /* Radio */
+  .rgroup{display:flex;gap:14px;margin-bottom:9px}
+  .rlbl{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;color:var(--g800)}
+  .rlbl input{accent-color:var(--green)}
+
+  /* Step rows (ENGAGE phase) */
+  .step-row{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border-radius:8px;margin-bottom:7px;cursor:pointer;user-select:none;border:1.5px solid transparent}
+  .step-row.done{opacity:.55}
+  .step-row.logistics{background:#f5f5f5;border-color:var(--g200)}
+  .step-row.mtnut-row{background:#000;border-color:#111}
+  .step-row.bridge-row{background:var(--g50);border-color:var(--g200)}
+  .step-check{width:17px;height:17px;accent-color:var(--green);flex-shrink:0;margin-top:3px;cursor:pointer}
+  .step-left{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:34px}
+  .step-badge{width:32px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .step-badge.bl{background:var(--g200);color:var(--g600)}
+  .step-badge.grn{background:var(--green);color:#000}
+  .step-badge.grn2{background:#16a34a;color:#fff}
+  .step-badge.grn3{background:#15803d;color:#fff}
+  .step-timing{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:center;line-height:1.2}
+  .step-timing.tl{color:var(--g400)}
+  .step-timing.tm{color:var(--green)}
+  .step-timing.tb{color:var(--g400)}
+  .step-body{flex:1}
+  .step-principle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .step-principle.pl{color:var(--g500)}
+  .step-principle.pm{color:var(--green)}
+  .step-principle.pb{color:var(--g400)}
+  .step-label{font-size:13px;font-weight:700;margin-bottom:4px}
+  .step-label.ll{color:var(--g800)}
+  .step-label.lm{color:#fff}
+  .step-label.lb{color:var(--g800)}
+  .step-script{font-size:12px;line-height:1.55;font-style:italic}
+  .step-script.sm{color:#bbb}
+  .step-script.sl{color:var(--g500)}
+  .step-script.sb{color:var(--g600)}
+  .step-script.done-s{text-decoration:line-through}
+  .seg-lbl{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.07em;padding:9px 0 4px;margin-top:2px}
+
+  /* Sub-tabs */
+  .stabs{display:flex;gap:6px;margin-bottom:12px}
+  .stab{padding:5px 13px;border-radius:6px;border:1px solid var(--g200);background:transparent;color:var(--g800);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .stab.on{background:var(--green);border-color:var(--green);color:#000}
+
+  /* Question cards */
+  .qcard{border:1px solid var(--g200);border-radius:8px;overflow:hidden;margin-bottom:7px}
+  .qhead{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;background:var(--g50)}
+  .qnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .qnum.gr{background:var(--green);color:#000}
+  .qnum.bk{background:var(--black);color:var(--green)}
+  .qtxt{font-size:13px;font-weight:700;color:var(--g800);line-height:1.4;margin-bottom:3px}
+  .qhint{font-size:11px;color:var(--g400);font-style:italic}
+  /* Filled indicator */
+  .qcard.filled .qhead{background:#e8fbe8}
+  .qbody{padding:7px 11px 9px;background:var(--white)}
+  /* Note input — NOT tied to oninput to avoid focus-loss bug */
+  .note-inp{width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--g200);border-radius:6px;background:var(--white);color:var(--g800);font-family:inherit}
+  .note-inp:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(10,206,10,.15)}
+
+  /* Path cards */
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+  .pcard{padding:10px 12px;border-radius:8px;border:1.5px solid var(--g200);background:var(--white);cursor:pointer;text-align:left;font-family:inherit}
+  .pcard.on{border-color:var(--pc,var(--green))}
+  .phdr{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+  .pbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;color:#000}
+  .ptitle{font-size:12px;font-weight:700;color:var(--g800)}
+  .plead{font-size:11px;color:var(--g400)}
+
+  /* Carrier cards */
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px;margin-bottom:13px}
+  .ccard{padding:11px 12px;border-radius:8px;border:1px solid var(--g200);border-top:2.5px solid var(--green);background:var(--white)}
+  .cname{font-size:13px;font-weight:700;color:var(--g800);margin-bottom:2px}
+  .ctype{font-size:11px;font-weight:700;margin-bottom:4px}
+  .cprod{font-size:11px;color:var(--g400);line-height:1.5}
+
+  /* Signals box */
+  .signals{border-radius:8px;padding:11px 13px;margin-bottom:13px;border:1px solid rgba(0,0,0,.08)}
+  .sig-row{display:flex;align-items:baseline;gap:7px;margin-bottom:4px;font-size:12px}
+  .sig-tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:3px;color:#000;white-space:nowrap;flex-shrink:0}
+  .sig-txt{color:var(--g600);font-style:italic;line-height:1.4}
+
+  /* Detected banner */
+  .dbanner{padding:9px 13px;border-radius:8px;margin-bottom:12px;border:1px solid rgba(0,0,0,.08)}
+  .dlbl{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+  .drow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:4px;color:#000}
+  .dtitle{font-size:13px;font-weight:700;color:var(--g800)}
+  .dlead{font-size:13px;font-weight:700}
+
+  /* Objections */
+  .oitem{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--g100)}
+  .oitem:last-child{border-bottom:none;margin-bottom:0}
+  .oq{font-size:12px;font-weight:700;color:var(--g800);margin-bottom:3px}
+  .oa{font-size:12px;color:var(--g500);font-style:italic;line-height:1.55}
+
+  /* Options */
+  .orow{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--g100)}
+  .orow:last-child{border-bottom:none}
+  .onum{width:21px;height:21px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;flex-shrink:0}
+  .otitle{font-size:13px;font-weight:700;color:var(--g800);margin-bottom:2px}
+  .odesc{font-size:12px;color:var(--g400)}
+
+  /* Summary */
+  .srow{font-size:13px;color:var(--g400);line-height:2}
+  .srow strong{color:var(--g800)}
+  .shighlight{color:var(--green);font-weight:700}
+
+  /* Buttons */
+  .btn{background:var(--green);color:#000;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;float:right;margin-top:12px}
+  .btn:hover{background:var(--green-dk)}
+  .btn:active{transform:scale(.98)}
+  .cf::after{content:"";display:table;clear:both}
+
+  /* Info bar */
+  .ibar{font-size:12px;color:var(--g400);background:var(--g50);border-radius:7px;padding:8px 11px;margin-bottom:11px}
+
+  /* Execute grid */
+  .egrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  @media(max-width:640px){
+    .g2,.egrid,.pgrid{grid-template-columns:1fr}
+    .hdr{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-brand" style="display:flex;align-items:center;gap:0;padding:0"><img src="data:image/jpeg;base64,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" alt="Channel One Strategies" style="height:28px;border-radius:5px;display:block;flex-shrink:0"></span>
+    <span class="hdr-div">Employer Discovery Tool</span>
+    <input class="hdr-inp" id="fi_company" placeholder="Company name…" onblur="renderAll()">
+    <input class="hdr-inp" id="fi_presenter" placeholder="Presenter name…" onblur="renderAll()">
+  </div>
+  <div id="tabs"></div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+// ─── State ──────────────────────────────────────────────────────────────
+const S = {
+  phase:'engage', dtab:'data',
+  checks:{dm:false,agenda:false,openQ:false,survey:false},
+  medOffered:'',carrier:'',renewal:'',broker:'',participating:'',
+  erPays:'',deductible:'',oopm:'',copay:'',coins:'',
+  sec125:false,hsa:false,hra:false,fsa:false,
+  dentalyn:'',visionyn:'',lifeyn:'',ltdyn:'',stdyn:'',std_carrier:'',std_pct:'',std_maxWeekly:'',std_len:'',std_wait:'',std_def:'',std_fund:'',
+  ltdCarrier:'',ltdPct:'',ltdMax:'',ltdElim:'',ltdDur:'',ltdDef:'',ltdFund:'',
+  payroll:'',payCycle:'',totalEE:'',ft:'',pt:'',tenured:'',
+  pain1:'',pain2:'',notes:'',
+  qNotes:{},   // keyed by question id string e.g. "1", "i1"
+  selPath:null,
+  ec:{app:false,census:false,preComm:false,followup:false},
+  enrollDate:'',contactMethod:'',nextDate:'',
+};
+
+// ─── Data ───────────────────────────────────────────────────────────────
+const PATHS = {
+  A:{label:'Path A',title:'No benefits offered',          lead:'Lead with ICHRA or Voluntary',        color:'#0ACE0A'},
+  B:{label:'Path B',title:'Benefits exist — cost pain',   lead:'Lead with Cost Reduction',             color:'#F5A623'},
+  C:{label:'Path C',title:'Benefits exist — retention pain',lead:'Lead with Enhancement & Ancillary', color:'#4A90D9'},
+  D:{label:'Path D',title:'Benefits exist — awareness gap',lead:'Lead with Technology & Communication',color:'#9B59B6'},
+};
+
+const PATH_DESC = {
+  A:'Employer has never offered benefits. Lead with ICHRA\'s zero-surprise fixed budget model or introduce voluntary lines at zero ER cost through payroll deduction.',
+  B:'Employer is feeling premium pressure or has shifted cost to employees. Lead with defined contribution / ICHRA as an alternative. Use PerfectQuote to model current vs. new cost side-by-side.',
+  C:'Employer is losing talent or competing for workers. Lead with ancillary lines that add perceived value: Group Whole Life, LTD, STD, Dental/Vision add-ons.',
+  D:'Employer offers benefits but employees don\'t understand or use them. Lead with Employee Navigator portal and a structured open enrollment communication strategy.',
+};
+
+const CARRIERS = {
+  A:[
+    { name:'Zizzl', badge:'#0ACE0A', type:'ICHRA Platform',
+      highlight:'Fixed monthly contribution per employee. No group minimum, no participation floor.',
+      products:['Employer sets a fixed dollar amount per employee — zero renewal surprises','Employees shop their own ACA marketplace plan (no group plan required)','Reimbursements are tax-free for employer and employee','Creates a Special Enrollment Period for all employees immediately','Unused funds stay with the employer — no waste','Works for W-2 employees of any size group'],
+      useCase:'No benefits offered, or employer wants to exit group plan entirely' },
+    { name:'MassMutual', badge:'#003087', type:'Group Whole Life — Voluntary',
+      highlight:'Permanent life insurance via payroll deduction. Zero ER cost on voluntary basis.',
+      products:['Guaranteed Issue up to $100K (25+ lives) — no medical exam, 3-question app','Portable at same premium rate when employees leave','Cash value accumulation — accessible for emergencies, education, illness','Chronic Care Benefit for qualified chronic illness','Dividend eligible beginning second anniversary','Target: W-2, white/gray collar, 25+ lives employee-paid, 10+ employer-paid'],
+      useCase:'Path A: add voluntary anchor benefit at zero ER cost' },
+    { name:'Transamerica', badge:'#005EB8', type:'Worksite Voluntary Suite',
+      highlight:'One carrier, one platform. Full voluntary suite simplifies admin dramatically.',
+      products:['Accident Insurance (AccidentAdvance) — 24hr or off-job, guaranteed issue','Critical Illness — 47 conditions incl. COVID-19, $10K–$50K benefits','Hospital Indemnity — no deductibles, complements major medical','Universal Life (TransElite) — permanent, cash value, maturity to age 120','ClaimsMinder auto-notifies employees when they may have a claim'],
+      useCase:'Add voluntary suite at zero ER cost — employees fund through payroll deduction' },
+  ],
+  B:[
+    { name:'Zizzl + PerfectQuote', badge:'#0ACE0A', type:'ICHRA / Defined Contribution',
+      highlight:'Replace unpredictable renewals with a fixed employer budget. Model savings vs. current plan.',
+      products:['Fixed monthly contribution replaces group premium — budget is permanent','PerfectQuote models current group cost vs. ICHRA contribution side-by-side','Employees choose their own ACA plan — get coverage that actually fits them','ACA marketplace plans may qualify for additional premium tax credits','Employer controls increases — contributions only go up when you decide'],
+      useCase:'Benefits exist but cost is rising or unsustainable — ICHRA locks in the number' },
+    { name:'Guardian', badge:'#005A8E', type:'Dental / Vision / Life / Disability',
+      highlight:'Best bundled pricing on full ancillary suite. Rates and proposals via PerfectQuote.',
+      products:['Group Dental — comprehensive, national network, competitive bundled rates','Group Vision — routine eye care, hardware benefits, national network','Group LTD — 60% income, 90-day elim., SSNRA duration, 24-mo Own Occ / Any Occ, 15% comm.','Group Basic Life / AD&D — employer-paid group term with buyup options','All lines submitted together in PerfectQuote for fastest quote turnaround'],
+      useCase:'Cost reduction via carrier consolidation and rebid — especially effective at renewal' },
+    { name:'Reliance Matrix', badge:'#8B0000', type:'Disability & Absence Management',
+      highlight:'A++ AM Best. #1 US Absence Management Provider (Spring Consulting 2023).',
+      products:['Group LTD — 56% of their premium mix, highly competitive pricing','Group STD — flexible elimination and benefit periods, integrated absence mgmt','Critical Illness, Accident, Hospital Indemnity — full supplemental suite','FMLA/PFML administration — reduces HR time on leave management','Integrates natively with Employee Navigator, ADP, bswift, Plansource'],
+      useCase:'Employers with disability gaps or FMLA/leave administration headaches' },
+    { name:'PerfectQuote', badge:'#333', type:'Quoting & Presentation Platform',
+      highlight:'Channel One technology edge. Saves 4–6 hrs per quote vs. manual comparison.',
+      products:['Multi-carrier quoting: 400+ carriers, instant side-by-side plan comparison','Proposal Reader (OCR) — upload any carrier proposal, PQ extracts and compares automatically','Branded employer presentation in minutes — shareable PDF or live screen share','Direct push to Employee Navigator for seamless enrollment setup'],
+      useCase:'Always — this is how you demonstrate the value of working with Channel One' },
+  ],
+  C:[
+    { name:'MassMutual', badge:'#003087', type:'Group Whole Life — Retention Anchor',
+      highlight:'The benefit employees keep forever. Cash value + chronic care = real financial security.',
+      products:['Portable permanent coverage — employees keep it even after leaving','Builds cash value accessible for any reason (emergency, education, illness)','Chronic Care Benefit for qualified chronic illness at no additional premium','Dividend eligible — historically paid, not guaranteed','Strengthens overall package at zero ER cost (voluntary) or modest cost (ER-paid)','Positions employer as investing in employees\u2019 long-term financial well-being'],
+      useCase:'Path C: retention is the pain — GWL is a differentiator competitors rarely offer' },
+    { name:'Reliance Matrix', badge:'#8B0000', type:'LTD / STD / Supplemental Health',
+      highlight:'Disability + absence management in one package. Reduces HR burden significantly.',
+      products:['Group LTD and STD with integrated FMLA/PFML/leave administration','Critical Illness, Accident, Hospital Indemnity — employees fund voluntarily','Single examiner handles the full absence event — STD, FMLA, state leave all coordinated','Absence Blueprint\u00ae leave planning software saves HR hours per case','Integrates with Employee Navigator and major payroll systems'],
+      useCase:'Employers losing productivity to unmanaged disability and leave claims' },
+    { name:'Guardian', badge:'#005A8E', type:'Dental / Vision / Disability',
+      highlight:'Dental and Vision are the top two benefits employees request after medical.',
+      products:['Group Dental — national network, preventive 100% covered, major restorative options','Group Vision — hardware allowance + exam coverage, discount on laser surgery (SightAdvantage via Transamerica)','Group LTD — 60% income, 90-day elim., SSNRA, 24-mo Own Occ / Any Occ, 15% comm.','Group STD — competitive rates, flexible plan design','Bundle Dental + Vision + Disability for best pricing'],
+      useCase:'Path C: add the benefits competitors offer that this employer does not' },
+    { name:'Transamerica', badge:'#005EB8', type:'Full Voluntary Suite',
+      highlight:'Broadest voluntary menu available through one platform and one admin relationship.',
+      products:['Accident (AccidentAdvance) — #1 requested voluntary benefit nationwide','Critical Illness — 47 conditions, $10K–$50K, wellness benefit rider available','Hospital Indemnity — designed to complement major medical, no deductibles','Group STD / LTD — employer paid, buyup, or voluntary options','Group Term Life with living benefits and conversion options'],
+      useCase:'Employers who want to build a competitive benefits menu without large ER investment' },
+  ],
+  D:[
+    { name:'Employee Navigator', badge:'#FF6B00', type:'Benefits Administration Platform',
+      highlight:'If employees do not understand or use their benefits — EN solves that.',
+      products:['Employee self-service portal — benefits visible, explainable, and actionable 24/7','Digital SBCs, plan summaries, and side-by-side comparisons in plain language','Online open enrollment with e-signatures — eliminates paper and manual tracking','New hire onboarding workflows with benefit education built in','400+ carrier EDI connections — no more manual carrier enrollment files','Integrates with ADP, Paychex, Paylocity, and 100+ payroll systems'],
+      useCase:'Path D: low participation, manual OE process, or employees not understanding benefits' },
+    { name:'PerfectQuote', badge:'#333', type:'Quoting & Presentation Platform',
+      highlight:'Branded presentations that make benefits tangible. Employees see value, not just cost.',
+      products:['Side-by-side plan comparison employees can actually read and understand','Proposal Reader — upload any carrier proposal, auto-extract and compare','Branded employer-facing presentation with Channel One identity','Direct connection to Employee Navigator for seamless OE setup'],
+      useCase:'Always — demonstrate Channel One\u2019s technology advantage at every meeting' },
+    { name:'MassMutual', badge:'#003087', type:'Group Whole Life — Engagement Driver',
+      highlight:'Add a permanent benefit employees can see value in immediately.',
+      products:['Voluntary GWL creates a new reason for employees to engage during OE','3-question app, no medical exam — easiest enrollment in the benefits package','Builds cash value and provides chronic care coverage — tangible, explainable value','Employees can increase coverage at life events — keeps them engaged year to year'],
+      useCase:'Add a sticky voluntary line that improves overall benefits participation and engagement' },
+    { name:'Transamerica', badge:'#005EB8', type:'Worksite Voluntary — Communication Tools',
+      highlight:'ClaimsMinder auto-notifies employees when they may have a claim — closes the awareness gap.',
+      products:['ClaimsMinder\u2122 — analyzes major medical data and alerts employees who may be claim-eligible','Benefits Sherpa\u00ae report identifies which voluntary products best match this workforce','Tailored enrollment communications and timelines for each case','Flexible enrollment works with any ben admin platform including Employee Navigator'],
+      useCase:'Path D: employees have benefits but aren\u2019t using them — Transamerica\u2019s tools change that' },
+    { name:'Beam Benefits', badge:'#1DA1F2', type:'Digital Dental, Vision & Ancillary',
+      highlight:'Digital-first quoting in seconds. Groups as small as 2 employees. Named Inc. 5000 three consecutive years.',
+      products:['Group Dental PPO — 400K+ access points, up to $5,000 annual max, customizable coinsurance tiers','Group Vision — VSP network 121K+ providers, $10 copay, $200 frame/contact allowance every 12-24 months','Life/AD&D — Nationwide underwritten, GI with digital EOI, instant coverage decisions','STD/LTD — underwritten by Hartford Life, flexible plan design','Accident, Critical Illness, Hospital Indemnity — full supplemental suite','Lighthouse admin portal — self-service enrollment, billing, member management','Custom quotes for any group size generated in seconds'],
+      useCase:'Path D: employer wants a modern digital experience for dental and vision — fast to quote, easy to manage' },
+  ],
+};
+
+// ── Additional carriers available across all paths ────────────────────────
+const CARRIER_LIBRARY = [
+  { name:'Assurity', badge:'#2E7D32', type:'Worksite Voluntary Suite — Individual & Group',
+    highlight:'Named Voluntary Sales Growth Leader by Eastbridge Consulting 3 consecutive years. Sales up 27% in 2024.',
+    products:['Group Whole Life — portable, builds cash value, Chronic Illness Rider, GI up to case-size limits','Group Term Life — $25K-$250K, up to $150K GI, portable/convertible, available in 40 states (launched Aug 2024)','Group STD — flexible elimination/benefit periods, employer-paid or voluntary','Hospital Indemnity — first-dollar coverage, complement to major medical','Accident Expense — 24hr or off-job, guaranteed issue','Critical Illness — lump-sum benefit for major diagnoses','Accidental Death Insurance — standalone AD coverage','Individual products: Whole Life, Term Life, Universal Life, Disability Income (Income Protection+)'],
+    useCase:'All paths: strong alternative to MassMutual for voluntary life and supplemental health. Individual products for executive or owner coverage.' },
+  { name:'Pacific Life', badge:'#0066B3', type:'Workforce Benefits — Full Group Suite (Digital)',
+    highlight:'100% digital ecosystem from quote to claim. Fortune 500. Nearly 160 years old. Integrates with Employee Navigator and bswift.',
+    products:['Group Dental — comprehensive PPO coverage, competitive rates','Group Vision — routine care, hardware allowance','Group Life/AD&D — employer-paid and voluntary options','Accident Insurance — workplace and 24hr options','Critical Illness — lump-sum on diagnosis','Hospital Indemnity — fixed benefit for hospitalization','Group STD — launched Jan 2025, income protection for shorter disability periods','Group LTD — launched Jan 2025, EAP through TELUS Health embedded, vocational rehab incentive'],
+    useCase:'Path B/C: modern digital alternative to traditional group carriers. All lines in one platform, seamless from quoting through claims.' },
+  { name:'ManhattanLife', badge:'#8B0000', type:'Voluntary Group Benefits — Supplemental & Gap-Fill',
+    highlight:'Founded 1850 — one of the oldest US insurers. Available for employers as small as 2 employees. All 50 states + territories.',
+    products:['Accident Insurance — complements medical, covers out-of-pocket gaps','Critical Illness & Cancer — lump sum + recurrence benefit, covers heart attack, stroke, and 40+ conditions','Hospital Indemnity — Group GAP and Group Affordable Choice (limited benefit medical), first-dollar coverage','STD — flexible plan design, small to large groups','Life Insurance — Group Term, Whole Life, and Universal Life','Stop-Loss (WesternSkies MGU) — for self-insured employers, catastrophic medical and pharmacy protection','Completely customizable plans OR turnkey solutions'],
+    useCase:'Path A/C: gap-fill specialist for employers who need supplemental coverage on a tight budget. Works for groups of 2+.' },
+  { name:'Thatch', badge:'#0ACE0A', type:'ICHRA Platform — Consumer-First Health Benefits',
+    highlight:'Backed by a16z, Index Ventures, General Catalyst & ADP Ventures. $84M raised. 1,000+ companies. Revenue 8x YoY.',
+    products:['ICHRA administration — employer sets budget, employees choose any ACA plan from any carrier','Thatch Marketplace — curated health and wellness services employees access with leftover budget balance','Thatch Visa debit card — leftover ICHRA balance becomes spendable on prescriptions, copays, therapy, and more','Ask Thatch AI — 24/7 SMS-based benefits assistant for employees','Budget classes — segment employees by location, role, or hours worked with different allowance tiers','Native ADP RUN integration — ICHRA discovery, enrollment, and payroll sync in one workflow','QuickBooks integration — fully embedded benefits setup from within payroll','Built-in compliance — ACA, PCORI, ERISA, Medicare Part D reporting handled automatically'],
+    useCase:'Path A/B: ICHRA alternative to Zizzl with a consumer-first marketplace. Best for employers using ADP or QuickBooks payroll. Thatch Visa card differentiates it when employees want flexibility beyond just insurance premiums.' },
+];
+
+
+
+const DQS = [
+  {n:1,  q:"How has your business changed in the last year \u2014 and what\u2019s had the biggest impact on your people and operations?",
+         h:"Sets the strategic context. Surfaces growth, stress, disruption, or a pivot \u2014 all of which create benefits urgency.",
+         keys:['cost','grow','hire','turn','expan','staff','challeng','short','hard']},
+  {n:2,  q:"What is the single biggest challenge right now when it comes to attracting and keeping good people?",
+         h:"Cuts straight to talent pain. One answer surfaces whether this is a Path B (cost), C (retention), or D (awareness) conversation.",
+         keys:['hire','attract','keep','benefit','pay','compet','turn','leave','quit','find','wage']},
+  {n:3,  q:"What has been your greatest expense over the last 5 years \u2014 and is that number getting better or worse?",
+         h:"If benefits, labor, or insurance comes up \u2014 that\u2019s your opening. The \u2018better or worse\u2019 follow-up surfaces trend pain.",
+         keys:['benefit','insurance','health','premium','cost','labor','payroll','increase','higher','expens']},
+  {n:4,  q:"Has your employee count fluctuated in the last year? What does hiring look like right now?",
+         h:"Headcount changes = benefits eligibility changes. Active hiring = new employees without coverage = your immediate opportunity.",
+         keys:['hire','grow','shrink','layoff','adding','growing','people','staff','turnover','new']},
+  {n:5,  q:"[IF NO BENEFITS] What has prevented you from offering a benefits program \u2014 was it cost, complexity, or group size?",
+         h:"Cost \u2192 ICHRA. Complexity \u2192 EN + PQ tools. Group size \u2192 ICHRA or voluntary. Each answer maps directly to a solution.",
+         keys:['cost','afford','too small','complex','admin','confus','understand','never','tried']},
+  {n:6,  q:"[IF BENEFITS EXIST] What changes have you had to make to your benefits or premiums in the last 2 years \u2014 and is that sustainable?",
+         h:'"Sustainable?" is the key word. Forces them to say yes or no. No \u2192 Path B. The renewal story comes out here.',
+         keys:['increas','higher','cost','shift','cut','reduc','premium','expensiv','afford','renewal','went up']},
+  {n:7,  q:"How do you communicate benefits to employees during open enrollment \u2014 and are your people actually using what you\u2019re paying for?",
+         h:'"Paying for" surfaces the waste angle. Low usage or manual/paper process = Path D (technology).',
+         keys:['low','manual','confus','don\'t understand','not sure','poor','email','paper','participation','nobody','don\'t use']},
+  {n:8,  q:"Have you ever lost a key employee to a competitor? Walk me through what that actually cost you.",
+         h:'"Walk me through" makes them calculate it themselves. Recruiting + training + lost productivity = 50\u2013200% of salary.',
+         keys:['lose','lost','left','quit','poached','hired away','took','turnover','competitor','offer','better']},
+  {n:9,  q:"What does employee retention look like for you \u2014 and what\u2019s the longest tenure you\u2019re seeing in your key roles?",
+         h:"Short tenure for key roles = real retention problem. Both short and long tenure open the benefits conversation differently.",
+         keys:['short','turn','leave','year','long','loyal','stay','new','replace','average','tenure']},
+  {n:10, q:"When you lose an employee, what does it actually cost you \u2014 in time, in money, and in what you lose while the seat is empty?",
+         h:"Forces them to quantify. Most employers haven\u2019t done this math. Once they do, the benefit cost feels small by comparison.",
+         keys:['cost','week','month','time','train','productiv','recruit','hire','empty','cover','downtime']},
+  {n:11, q:"Have you had an employee miss significant time due to illness or injury? How did that impact your team \u2014 and what did it cost?",
+         h:"Natural STD/LTD opener without pitching. \u2018What did it cost you?\u2019 ties disability coverage to a real number they\u2019ve lived.",
+         keys:['ill','injur','sick','miss','absent','disab','surgery','medical','week','month','cover','out','time off']},
+  {n:12, q:"If everything stayed exactly the same for the next 12 months \u2014 same benefits, same turnover, same costs \u2014 what does that mean for your business?",
+         h:"Future-state urgency closer. Surfaces the cost of inaction in their own words. Never manufactured \u2014 always revealed.",
+         keys:['worse','same','still','problem','issue','turnover','cost','keep','losing','can\'t','stuck']},
+];
+
+const IQS = [
+  {
+    n:1,
+    q:"What if you could set a fixed dollar amount per employee each month and never see a renewal increase again \u2014 ever?",
+    h:"Kills the #1 employer fear: unpredictable cost escalation. ICHRA = you set the budget, period.",
+    hotWhen:"No medical offered, or cost pain detected in notes",
+    signals:['noMed','highCost','renewalPain'],
+  },
+  {
+    n:2,
+    q:"If the cost and complexity of a traditional group plan were completely off the table \u2014 would you want your employees to have health coverage?",
+    h:'Reframes "can\'t afford benefits" into "would you if you could?" Almost everyone says yes. Then you show them how.',
+    hotWhen:"No medical only \u2014 surfaces the desire that cost has been blocking",
+    signals:['noMed'],
+  },
+  {
+    n:3,
+    q:"What if your employees could keep their health plan even after they leave your company \u2014 no gap in coverage, no COBRA scramble?",
+    h:"Portability is a powerful differentiator. Employees on individual plans through ICHRA own their coverage \u2014 it\u2019s not tied to employment.",
+    hotWhen:"Retention pain or high turnover detected",
+    signals:['noMed','retentionPain'],
+  },
+  {
+    n:4,
+    q:"Did you know that offering an ICHRA creates a Special Enrollment Period \u2014 meaning your employees can get on a plan immediately, any time of year?",
+    h:"Most employers don\u2019t know this. SEP solves the new-hire coverage gap on the spot \u2014 no waiting for open enrollment.",
+    hotWhen:"No benefits or currently hiring",
+    signals:['noMed','hiring'],
+  },
+  {
+    n:5,
+    q:"ACA marketplace plans in your area may qualify for premium tax credits on top of your ICHRA contribution. Has anyone shown you what that combination looks like?",
+    h:"Tax credit stacking is the most underused ICHRA advantage. For lower-wage employees, the net cost can be near zero.",
+    hotWhen:"No benefits or small group (under 15 EEs)",
+    signals:['noMed','smallGroup'],
+  },
+  {
+    n:6,
+    q:"What percentage of your employees are actually enrolled in the plan you\u2019re funding? Are some covered through a spouse or another source?",
+    h:"Group plans require minimum participation \u2014 wasted premium is common. ICHRA has no participation floor, and unused funds stay with the employer.",
+    hotWhen:"Medical offered \u2014 surfaces participation waste",
+    signals:['hasMed','lowParticipation'],
+  },
+  {
+    n:7,
+    q:"Your employees have different ages, family sizes, and health needs. Is your current plan actually working for all of them, or is it built around the average?",
+    h:"One-size-fits-all is the silent failure of group plans. ICHRA lets every employee choose the plan that fits their actual life.",
+    hotWhen:"Medical offered with mixed or diverse workforce",
+    signals:['hasMed','diverseWorkforce'],
+  },
+  {
+    n:8,
+    q:"What if you could cap your annual benefits spend at exactly the number you choose \u2014 and the only way it goes up is if you decide to raise it?",
+    h:"Budget certainty is the strongest ICHRA message for cost-squeezed employers. Renewals become irrelevant when you control the number.",
+    hotWhen:"Medical offered with rising costs or cost pain in notes",
+    signals:['hasMed','highCost','renewalPain'],
+  },
+];
+
+// ─── Path detection — reads ALL notes ───────────────────────────────────
+function detectPath() {
+  if (S.medOffered === 'no') return 'A';
+  if (!S.medOffered) return null;
+
+  // Collect all text from every note field
+  const allNotes = [
+    S.pain1, S.pain2, S.notes,
+    ...Object.values(S.qNotes),
+  ].join(' ').toLowerCase();
+
+  // Weighted scoring
+  let scores = {A:0, B:0, C:0, D:0};
+
+  // Cost / affordability signals → B
+  if (/cost|premium|afford|expens|price|budget|increase|higher|shift|cut|too much|rate/.test(allNotes)) scores.B += 3;
+  // Retention / talent signals → C
+  if (/turn|retain|talent|recruit|compet|keep|lose|lost|left|quit|hire/.test(allNotes)) scores.C += 3;
+  // Communication / awareness signals → D
+  if (/communic|enroll|understand|aware|educat|don't know|confus|particip|engage|portal|tech/.test(allNotes)) scores.D += 3;
+  // No benefits / can't afford → A boosters
+  if (/never offer|no benefit|can't afford|couldn't afford|too small|not yet/.test(allNotes)) scores.A += 4;
+
+  // Pain1/pain2 specific weight
+  const pain = (S.pain1 + ' ' + S.pain2).toLowerCase();
+  if (/cost|premium|afford|expens/.test(pain)) scores.B += 4;
+  if (/turn|retain|talent|competit|recruit|hire|keep/.test(pain)) scores.C += 4;
+  if (/communic|enroll|understand|aware|particip/.test(pain)) scores.D += 4;
+
+  // Find winner
+  const top = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  if (top[0][1] === 0) return 'C'; // default
+  return top[0][0];
+}
+
+// Build "signals" list for Guide — what notes drove the path
+function buildSignals(path) {
+  const signals = [];
+  const allText = [S.pain1, S.pain2, S.notes, ...Object.values(S.qNotes)];
+
+  const keywordMap = {
+    B: [/cost/,/premium/,/afford/,/expens/,/increase/,/higher/,/shift/,/cut/,/budget/],
+    C: [/turn/,/retain/,/talent/,/recruit/,/compet/,/keep/,/lose/,/lost/,/quit/,/hire/],
+    D: [/communic/,/enroll/,/understand/,/aware/,/particip/,/engage/,/portal/,/confus/],
+    A: [/no benefit/,/never offer/,/can't afford/,/too small/,/not yet/],
+  };
+
+  const keys = keywordMap[path] || [];
+  DQS.forEach(q => {
+    const note = (S.qNotes[q.n] || '').trim();
+    if (!note) return;
+    if (keys.some(rx => rx.test(note.toLowerCase()))) {
+      signals.push({ src: `Q${q.n}`, text: note.length > 80 ? note.slice(0,77)+'…' : note });
+    }
+  });
+  if (S.pain1) signals.push({ src:'Pain 1', text: S.pain1 });
+  if (S.pain2) signals.push({ src:'Pain 2', text: S.pain2 });
+  const freeNote = (S.notes||'').trim();
+  if (freeNote) signals.push({ src:'Notes', text: freeNote.length > 80 ? freeNote.slice(0,77)+'…' : freeNote });
+
+  return signals;
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────
+function e(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function field(lbl, html){ return `<div class="field"><label class="lbl">${lbl}</label>${html}</div>` }
+function inp(id, val, ph, type='text'){
+  // Uses onchange (fires on blur) so typing isn't interrupted by re-renders
+  return `<input class="inp" id="fi_${id}" type="${type}" placeholder="${ph}" value="${e(val||'')}" onchange="sv('${id}',this.value)">`
+}
+function selEl(id, val, opts){
+  return `<select class="inp" id="fi_${id}" onchange="sv('${id}',this.value)">
+    <option value="">Select…</option>
+    ${opts.map(o=>`<option${val===o?' selected':''}>${e(o)}</option>`).join('')}
+  </select>`
+}
+function chkEl(key, checked, lbl, fn){
+  return `<label class="chkrow${checked?' done':''}">
+    <input type="checkbox" ${checked?'checked':''} onchange="${fn}">
+    <span>${lbl}</span>
+  </label>`
+}
+
+// ─── State setters ───────────────────────────────────────────────────────
+function sv(k,v){ S[k]=v; renderAll(); }
+function sc(k,v){ S.checks[k]=v; renderAll(); }
+// Note setter — does NOT re-render (called from onblur, no need to re-render while typing)
+function sqBlur(k,v){ S.qNotes[k]=v; }
+// Pain / notes setter — does NOT re-render while typing
+function sfBlur(k,v){ S[k]=v; }
+function se(k,v){ S.ec[k]=v; renderAll(); }
+
+
+// ─── FINISH PRESENTATION ──────────────────────────────────────────────────────
+function finishHTML(){
+  const company = (document.getElementById('fi_company')||{}).value || '';
+  const presenter = (document.getElementById('fi_presenter')||{}).value || '';
+  const ap = S.selPath || detectPath();
+  const p  = ap ? PATHS[ap] : null;
+  const noMed = S.medOffered === 'no';
+  const hasMed = S.medOffered === 'yes';
+
+  // Build summary sections
+  function row(label, val){ return val ? `<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--g100);font-size:13px"><span style="color:var(--g400);min-width:160px;flex-shrink:0">${label}</span><span style="color:var(--g800);font-weight:500">${val}</span></div>` : ''; }
+
+  const medSection = S.medOffered ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Medical Coverage</div>
+      ${row('Status', noMed ? 'No benefits currently offered' : 'Benefits offered')}
+      ${row('Carrier', S.carrier)}
+      ${row('Renewal date', S.renewal)}
+      ${row('Employer pays', S.erPays ? S.erPays+'%' : '')}
+      ${row('Deductible / OOPM', S.deductible&&S.oopm ? S.deductible+' / '+S.oopm : S.deductible||S.oopm)}
+    </div>` : '';
+
+  const ancSection = (S.dentalyn||S.visionyn||S.lifeyn||S.ltdyn||S.stdyn) ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Ancillary Benefits</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px">
+        ${[['Dental',S.dentalyn],['Vision',S.visionyn],['Life',S.lifeyn],['LTD',S.ltdyn],['STD',S.stdyn]].map(([l,v])=>v?`
+        <span style="padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;background:${v==='yes'?'var(--green)':'var(--g200)'};color:${v==='yes'?'#000':'var(--g500)'}">
+          ${l}: ${v==='yes'?'Yes':'No'}
+        </span>`:''). join('')}
+      </div>
+      ${S.ltdyn==='yes'?row('LTD details', [S.ltdCarrier,S.ltdPct,S.ltdElim,S.ltdDur,S.ltdDef,S.ltdFund].filter(Boolean).join(' | ')):''}
+      ${S.stdyn==='yes'?row('STD details', [S.std_carrier,S.std_pct,S.std_maxWeekly,S.std_def,S.std_wait,S.std_len,S.std_fund].filter(Boolean).join(' | ')):''}
+    </div>` : '';
+
+  const workSection = (S.totalEE||S.payroll) ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Workforce & Payroll</div>
+      ${row('Total employees', S.totalEE)}
+      ${row('Full-time / Part-time', S.ft&&S.pt?S.ft+' FT / '+S.pt+' PT':S.ft?S.ft+' FT':S.pt?S.pt+' PT':'')}
+      ${row('Tenured 12+ months', S.tenured)}
+      ${row('Payroll provider', S.payroll)}
+      ${row('Pay cycle', S.payCycle)}
+    </div>` : '';
+
+  const painSection = (S.pain1||S.pain2||S.notes) ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Pain Points & Notes</div>
+      ${row('Primary pain', S.pain1)}
+      ${row('Secondary pain', S.pain2)}
+      ${S.notes?`<div style="padding:8px;background:var(--g50);border-radius:6px;font-size:12px;color:var(--g600);line-height:1.6;margin-top:6px;font-style:italic">${e(S.notes)}</div>`:''}
+    </div>` : '';
+
+  // Question notes summary
+  const allNotes = [];
+  DQS.forEach(q=>{ const n=(S.qNotes[q.n]||'').trim(); if(n) allNotes.push({src:'Q'+q.n, q:q.q.replace(/\[IF[^\]]*\]/g,'').trim(), note:n}); });
+  IQS.forEach(q=>{ const n=(S.qNotes['i'+q.n]||'').trim(); if(n) allNotes.push({src:'ICHRA '+q.n, q:q.q, note:n}); });
+  const notesSection = allNotes.length ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Discovery Notes (${allNotes.length} captured)</div>
+      ${allNotes.map(n=>`
+        <div style="padding:7px 0;border-bottom:1px solid var(--g100)">
+          <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.04em">${n.src}</div>
+          <div style="font-size:11px;color:var(--g500);margin-bottom:3px">${n.q.slice(0,80)}${n.q.length>80?'...':''}</div>
+          <div style="font-size:12px;color:var(--g800);font-style:italic">"${e(n.note)}"</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  const recSection = ap && p ? `
+    <div style="padding:11px 13px;border-radius:8px;background:${p.color}12;border:1px solid ${p.color}40;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Recommended Presentation Path</div>
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+        <span style="background:${p.color};color:#000;font-size:12px;font-weight:700;padding:3px 10px;border-radius:4px">${p.label}</span>
+        <span style="font-size:14px;font-weight:700;color:var(--g800)">${p.title}</span>
+        <span style="font-size:13px;font-weight:700;color:${p.color}">&#8594; ${p.lead}</span>
+      </div>
+      ${S.pain1||S.pain2?`<div style="margin-top:8px;font-size:12px;color:var(--g600);font-style:italic">"So your main concerns are ${S.pain1?'"'+e(S.pain1)+'"':''}${S.pain1&&S.pain2?' and ':''}${S.pain2?'"'+e(S.pain2)+'"':''}. Did I understand that correctly?"</div>`:''}
+    </div>` : '';
+
+  const execSection = (S.enrollDate||S.nextDate||S.contactMethod) ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--g200)">Next Steps</div>
+      ${Object.entries(S.ec).filter(([k,v])=>v).map(([k])=>{
+        const labels={app:'Employer Application completed',census:'Census collected',preComm:'Pre-enrollment communication agreed',followup:'Follow-up meeting booked'};
+        return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;font-size:13px"><span style="color:var(--green);font-size:16px">&#10003;</span>${labels[k]||k}</div>`;
+      }).join('')}
+      ${row('Enrollment date', S.enrollDate?new Date(S.enrollDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'')}
+      ${row('Best way to reach employees', S.contactMethod)}
+      ${row('Next meeting', S.nextDate?new Date(S.nextDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'')}
+    </div>` : '';
+
+  // Email is handled by global sendSummaryEmail()
+
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:18px;font-weight:700;color:var(--g800)">Meeting Summary${company?' — '+e(company):''}</div>
+      <div style="font-size:12px;color:var(--g400);margin-top:2px">${new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}${presenter?' &nbsp;·&nbsp; Presented by '+e(presenter):''}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button onclick="saveToDevice()"
+        style="background:var(--green);color:#000;border:none;padding:10px 24px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">&#8595;</span> Save Summary to Device
+      </button>
+    </div>
+    <div style="font-size:11px;color:var(--g400);margin-top:6px">
+      Downloads a formatted .txt file instantly — works on any laptop, tablet, or phone. No email, no setup needed.
+      Open the saved file anytime as your meeting record.
+    </div>
+  </div>
+
+  <div style="background:var(--white);border:1px solid var(--g200);border-radius:10px;padding:16px">
+    ${recSection}
+    ${medSection}
+    ${ancSection}
+    ${workSection}
+    ${painSection}
+    ${notesSection}
+    ${execSection}
+    ${!recSection&&!medSection&&!workSection&&!painSection ? '<div style="text-align:center;padding:40px 0;color:var(--g400);font-size:14px">Complete the Discover and Guide phases to see your meeting summary here.</div>' : ''}
+  </div>
+
+`;
+}
+
+// ─── Global: send email summary ────────────────────────────────────────────
+// ── Save full summary to device as .txt file (primary action) ──────────────
+function buildSummaryText(){
+  const company   = (document.getElementById('fi_company')||{}).value||'';
+  const presenter = (document.getElementById('fi_presenter')||{}).value||'';
+  const ap  = S.selPath || detectPath();
+  const p   = ap ? PATHS[ap] : null;
+  const allNotes = [];
+  DQS.forEach(q=>{ const n=(S.qNotes[q.n]||'').trim(); if(n) allNotes.push('  Q'+q.n+': '+n); });
+  IQS.forEach(q=>{ const n=(S.qNotes['i'+q.n]||'').trim(); if(n) allNotes.push('  ICHRA Q'+q.n+': '+n); });
+  const gaps = buildGaps();
+
+  const lines = [
+    'CHANNEL ONE STRATEGIES',
+    'DISCOVERY MEETING SUMMARY',
+    '='.repeat(50),
+    company   ? 'Company:    '+company   : '',
+    presenter ? 'Presenter:  '+presenter : '',
+    'Date:       '+new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+    '',
+    p ? ['RECOMMENDED PATH: '+p.label+' \u2014 '+p.lead,
+         p ? PATH_DESC[ap] : ''].join('\n') : '',
+    (S.pain1||S.pain2) ? '\nPAIN POINTS IDENTIFIED:' : '',
+    S.pain1   ? '  Primary:   '+S.pain1 : '',
+    S.pain2   ? '  Secondary: '+S.pain2 : '',
+    S.notes   ? '  Notes:     '+S.notes : '',
+    '\nCURRENT BENEFITS:',
+    S.medOffered==='no'  ? '  Medical:   Not currently offered' :
+    S.medOffered==='yes' ? '  Medical:   '+[S.carrier||'(carrier not entered)',S.erPays?S.erPays+'% ER pays':null,S.renewal?'Renewal '+S.renewal:null,S.deductible?'Ded. '+S.deductible:null,S.oopm?'OOPM '+S.oopm:null].filter(Boolean).join(' | ') : '',
+    '  Dental:   '+(S.dentalyn==='yes'?'Yes':S.dentalyn==='no'?'No':'Not recorded'),
+    '  Vision:   '+(S.visionyn==='yes'?'Yes':S.visionyn==='no'?'No':'Not recorded'),
+    '  Life:     '+(S.lifeyn  ==='yes'?'Yes':S.lifeyn  ==='no'?'No':'Not recorded'),
+    '  LTD:      '+(S.ltdyn==='yes'?'Yes \u2014 '+[S.ltdCarrier,S.ltdPct,S.ltdElim,S.ltdDur,S.ltdDef,S.ltdFund].filter(Boolean).join(' | '):S.ltdyn==='no'?'No':'Not recorded'),
+    '  STD:      '+(S.stdyn==='yes'?'Yes \u2014 '+[S.std_carrier,S.std_pct,S.std_maxWeekly,S.std_wait,S.std_len,S.std_fund].filter(Boolean).join(' | '):S.stdyn==='no'?'No':'Not recorded'),
+    S.totalEE ? '\nWORKFORCE:' : '',
+    S.totalEE ? '  Total employees: '+S.totalEE+(S.ft||S.pt?' ('+[S.ft?S.ft+' FT':null,S.pt?S.pt+' PT':null].filter(Boolean).join(', ')+')':'') : '',
+    S.tenured ? '  Tenured 12+ mo:  '+S.tenured : '',
+    S.payroll ? '  Payroll:         '+S.payroll+(S.payCycle?' \u2014 '+S.payCycle:'') : '',
+    gaps.length ? '\nCOVERAGE GAPS IDENTIFIED:' : '',
+    ...gaps.map(g=>'  \u2022 '+g.label+' \u2192 '+g.carrier+' ('+g.product+')'),
+    allNotes.length ? '\nDISCOVERY NOTES ('+allNotes.length+' captured):' : '',
+    ...allNotes,
+    '\nNEXT STEPS:',
+    S.ec.app      ? '  \u2713 Employer Application completed'        : '  \u25a1 Employer Application pending',
+    S.ec.census   ? '  \u2713 Census collected'                       : '  \u25a1 Census needed',
+    S.ec.preComm  ? '  \u2713 Pre-enrollment communication agreed'    : '  \u25a1 Pre-enrollment communication TBD',
+    S.ec.followup ? '  \u2713 Follow-up meeting booked'               : '  \u25a1 Follow-up meeting not yet scheduled',
+    S.enrollDate  ? '  Enrollment date: '+new Date(S.enrollDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '',
+    S.nextDate    ? '  Next meeting:    '+new Date(S.nextDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '',
+    S.contactMethod ? '  Contact method:  '+S.contactMethod : '',
+    '',
+    '='.repeat(50),
+    'Channel One Strategies \u2014 channelonestrategies.com',
+  ].filter(l => l !== '').join('\n');
+  return lines;
+}
+
+function saveToDevice(){
+  const company = (document.getElementById('fi_company')||{}).value||'Meeting';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-');
+  const text = buildSummaryText();
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (company+' - Discovery Summary '+date+'.txt').replace(/[<>:"/\\|?*]/g,'');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function sendSummaryEmail(){
+  // Condensed version stays under mailto: character limits
+  const company   = (document.getElementById('fi_company')||{}).value||'';
+  const to1 = (document.getElementById('email_presenter')||{}).value||'';
+  const to2 = (document.getElementById('email_dm')||{}).value||'';
+  const ap  = S.selPath || detectPath();
+  const p   = ap ? PATHS[ap] : null;
+  const gaps = buildGaps();
+  const noteCount = DQS.filter(q=>(S.qNotes[q.n]||'').trim()).length +
+                    IQS.filter(q=>(S.qNotes['i'+q.n]||'').trim()).length;
+
+  // Short form — save to device for full details
+  const body = [
+    'CHANNEL ONE STRATEGIES \u2014 Discovery Meeting Summary',
+    company ? 'Company: '+company : '',
+    'Date: '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}),
+    '',
+    p ? 'PATH: '+p.label+' \u2014 '+p.lead : '',
+    S.pain1 ? 'Pain 1: '+S.pain1 : '',
+    S.pain2 ? 'Pain 2: '+S.pain2 : '',
+    '',
+    'Benefits: Medical '+( S.medOffered==='yes'?(S.carrier||'offered'):'not offered')+
+    ' | Dental: '+(S.dentalyn||'-')+' | Vision: '+(S.visionyn||'-')+
+    ' | Life: '+(S.lifeyn||'-')+' | LTD: '+(S.ltdyn||'-')+' | STD: '+(S.stdyn||'-'),
+    S.totalEE ? 'Employees: '+S.totalEE : '',
+    '',
+    gaps.length ? 'Gaps: '+gaps.map(g=>g.label).join(', ') : '',
+    noteCount   ? noteCount+' discovery notes captured (see saved .txt file for full detail)' : '',
+    '',
+    S.ec.followup && S.nextDate ? 'Next meeting: '+new Date(S.nextDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '',
+    '',
+    '(Full summary saved to device as .txt file)',
+  ].filter(Boolean).join('\n');
+
+  const subject = encodeURIComponent('Discovery Meeting'+(company?' \u2014 '+company:'')+' \u2014 '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+  const to = [to1,to2].filter(Boolean).join(',');
+  const link = 'mailto:'+to+'?subject='+subject+'&body='+encodeURIComponent(body);
+  if(link.length > 1900) {
+    alert('Note: The email body was shortened. Use "Save to Device" for the full summary.');
+  }
+  window.location.href = link;
+}
+
+// ─── Coverage gap analysis ────────────────────────────────────────────────
+function buildGaps(){
+  const gaps = [];
+  if (S.medOffered !== 'yes')
+    gaps.push({ label:'No medical coverage offered', carrier:'Zizzl', product:'ICHRA Platform',
+      desc:'Define a fixed monthly contribution. Employees choose their own ACA marketplace plan. Tax-free, no participation minimum, no renewal surprises.',
+      color:'#0ACE0A', priority:'critical' });
+  if (S.dentalyn !== 'yes')
+    gaps.push({ label:'No dental coverage', carrier:'Guardian', product:'Group Dental',
+      desc:'130,000-provider network (one of the largest). 100% coverage for kids under 12, diminishing deductible. Bundle with vision and LTD for best pricing via PerfectQuote.',
+      color:'#005A8E', priority:'high' });
+  if (S.visionyn !== 'yes')
+    gaps.push({ label:'No vision coverage', carrier:'Guardian', product:'Group Vision',
+      desc:'Routine eye care, glasses, contacts, and exams. Top-requested ancillary benefit after dental. Low employer cost, high employee perceived value.',
+      color:'#005A8E', priority:'high' });
+  if (S.lifeyn !== 'yes')
+    gaps.push({ label:'No life insurance', carrier:'MassMutual', product:'Group Whole Life',
+      desc:'Portable permanent coverage with cash value. Guaranteed Issue up to $100K (25+ lives), 3-question app, no medical exam. Zero ER cost on voluntary basis.',
+      color:'#003087', priority:'high' });
+  if (S.ltdyn !== 'yes')
+    gaps.push({ label:'No LTD coverage', carrier:'Guardian', product:'Group Long-Term Disability',
+      desc:'60% income, 90-day elim., SSNRA duration, 24-mo Own Occ/Any Occ thereafter. 15% commission. Caregiving support embedded. A++ rated, 160+ years. Quote via PerfectQuote.',
+      color:'#8B0000', priority:'high' });
+  if (S.stdyn !== 'yes')
+    gaps.push({ label:'No STD coverage', carrier:'Transamerica / Guardian', product:'Short-Term Disability',
+      desc:'Most employees have zero income backup for 2+ weeks of missed work. Available employer-paid, buy-up, or 100% voluntary. Guardian first carrier to embed paid family leave rider (available 75% of states).',
+      color:'#005EB8', priority:'high' });
+  return gaps;
+}
+
+// ─── Render tabs ─────────────────────────────────────────────────────────
+function renderTabs(){
+  const cfg=[
+    {id:'engage', l:'E',full:'Engage',  d:'Open'},
+    {id:'discover',l:'D',full:'Discover',d:'Collect data'},
+    {id:'guide',  l:'G',full:'Guide',   d:'Present'},
+    {id:'execute',l:'E',full:'Execute', d:'Close'},
+    {id:'finish', l:'F', full:'Finish', d:'Summary', special:true},
+  ];
+  document.getElementById('tabs').innerHTML = cfg.map(p=>`
+    <button class="tab${S.phase===p.id?' on':''}" onclick="sv('phase','${p.id}')">
+      <div class="tab-dot" style="${p.special?'background:var(--green);color:#000;border-color:var(--green)':''}">${p.l}</div>
+      <div class="tab-lbl">${p.full}</div>
+      <div class="tab-sub">${p.d}</div>
+    </button>`).join('');
+}
+
+function renderAll(){
+  renderTabs();
+  const fn={engage:engageHTML,discover:discoverHTML,guide:guideHTML,execute:executeHTML,finish:finishHTML};
+  document.getElementById('panel').innerHTML=(fn[S.phase]||engageHTML)();
+}
+
+// ─── ENGAGE ──────────────────────────────────────────────────────────────
+function engageHTML(){
+  const cx = S.engageSteps || {};
+  function ec(k){ return !!cx[k]; }
+  function tc(k){ S.engageSteps = S.engageSteps||{}; S.engageSteps[k]=!cx[k]; renderAll(); }
+
+  // Interleaved MTNUT + confirm steps — work top to bottom in order
+  const steps = [
+    {
+      type:'confirm', key:'dm',
+      badge:'1', bcls:'bl', when:'Before you say anything',
+      label:'Confirm everyone who needs to hear this is in the room',
+      script:'"Before we get started — is there anyone else who should be part of this conversation?"',
+      why:'You only want to do this once. A missing stakeholder kills a deal after you leave.'
+    },
+    {
+      type:'mtnut', key:'m',
+      badge:'M', bcls:'grn', when:'First words',
+      label:'Meaningful — open with your purpose, not your product',
+      script:'"My goal today isn\'t to sell you a plan. It\'s to understand your biggest business challenges and find out if a benefits solution can actually move the needle for you."',
+      why:'Meaningful: ties everything to their business outcome, not your agenda.'
+    },
+    {
+      type:'mtnut', key:'t1',
+      badge:'T', bcls:'grn', when:'Right after M',
+      label:'Timely — anchor the conversation to what\'s happening right now',
+      script:'"Healthcare costs are projected to rise nearly 10% again in 2026 — the third straight year at this level. The way you\'re managing benefits right now matters more than it ever has."',
+      why:'Timely: creates urgency with a real market stat. Hard to argue with.'
+    },
+    {
+      type:'confirm', key:'agenda',
+      badge:'2', bcls:'bl', when:'Check in',
+      label:'State your agenda — give them the map of how this conversation goes',
+      script:'"Here\'s what I\'d like to do today: first, I want to ask you a few questions about your business. Then, based on what I learn, I\'ll walk you through some options that actually fit your situation. Sound good?"',
+      why:'People relax when they know the structure. This removes defensiveness before it starts.'
+    },
+    {
+      type:'mtnut', key:'n',
+      badge:'N', bcls:'grn2', when:'After agenda',
+      label:'Necessary — frame the cost of doing nothing',
+      script:'"Studies show replacing a single employee can cost between 50% and 200% of their annual salary. A benefits package isn\'t an overhead expense — it\'s your retention strategy."',
+      why:'Necessary: positions your solution as essential, not optional.'
+    },
+    {
+      type:'mtnut', key:'u',
+      badge:'U', bcls:'grn', when:'After N',
+      label:'Unique — make clear why you are different from any other broker',
+      script:'"Unlike most brokers, I don\'t just shop your renewal with the same carrier. I bring a full technology platform — real-time quoting, side-by-side plan comparison, and a direct connection to your HR and enrollment system. You get options, not just a rate sheet."',
+      why:'Unique: they need to know why meeting with you is different from every other broker conversation.'
+    },
+    {
+      type:'confirm', key:'openQ',
+      badge:'3', bcls:'bl', when:'Ask permission',
+      label:'Get their buy-in before asking anything — this changes the dynamic',
+      script:'"To make sure anything I recommend is genuinely relevant to you — would you be open to sharing some insights about your business through a quick collaborative conversation?"',
+      why:'Get a "yes" here and discovery becomes a two-way conversation, not an interrogation.'
+    },
+    {
+      type:'mtnut', key:'t2',
+      badge:'T', bcls:'grn', when:'After their yes',
+      label:'Targeted — make it personal before you ask a single question',
+      script:'"Everything I\'m going to ask — and everything I\'ll recommend — is going to be specific to your company, your team, and your goals. This isn\'t a template. It\'s built around you."',
+      why:'Targeted: the last thing they hear before discovery starts. Sets the expectation that you\'ll listen before you pitch.'
+    },
+    {
+      type:'confirm', key:'survey',
+      badge:'4', bcls:'bl', when:'Transition',
+      label:'Pull out the Business Survey — fill it together, don\'t hand it to them',
+      script:'"I\'m going to take some notes as we go so I capture everything accurately. That way when I come back with options, I\'m working from what you actually told me — not what I assumed."',
+      why:'The survey is your discovery tool. Filling it together signals partnership, not a sales call.'
+    },
+  ];
+
+  const done = steps.filter(s=>ec(s.key)).length;
+  const pct = Math.round(done/steps.length*100);
+
+  const rows = steps.map((st,i) => {
+    const isDone = ec(st.key);
+    const isMtnut = st.type==='mtnut';
+    const bgStyle = isMtnut ? 'background:#000;border-color:#111' : 'background:#f6f6f6;border-color:#e0e0e0';
+    const labelClr = isMtnut ? 'color:#fff' : 'color:var(--g800)';
+    const scriptClr = isMtnut ? 'color:#bbb' : 'color:var(--g500)';
+    const whyClr = isMtnut ? 'color:#555' : 'color:var(--g400)';
+    const doneStyle = isDone ? 'opacity:.5' : '';
+
+    return `
+    <div style="display:flex;gap:0;margin-bottom:0">
+      <!-- connector line -->
+      <div style="display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0">
+        ${i>0?`<div style="width:2px;height:10px;background:${isMtnut?'#333':'var(--g200)'}"></div>`:'<div style="height:10px"></div>'}
+        <div style="width:28px;height:28px;border-radius:50%;background:${isMtnut?'var(--green)':'var(--g200)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${isMtnut?'#000':'var(--g500)'};flex-shrink:0;z-index:1">${st.badge}</div>
+        ${i<steps.length-1?`<div style="width:2px;flex:1;min-height:8px;background:${isMtnut?'#333':'var(--g200)'}"></div>`:''}
+      </div>
+      <!-- step card -->
+      <div style="flex:1;margin-bottom:7px;margin-left:8px">
+        <div onclick="tc('${st.key}')" style="border-radius:8px;padding:11px 13px;cursor:pointer;border:1.5px solid;${bgStyle};${doneStyle};user-select:none">
+          <div style="display:flex;align-items:flex-start;gap:9px">
+            <input type="checkbox" ${isDone?'checked':''} onclick="event.stopPropagation();tc('${st.key}')" style="accent-color:var(--green);width:15px;height:15px;margin-top:2px;flex-shrink:0;cursor:pointer">
+            <div style="flex:1">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;${isMtnut?'color:var(--green)':'color:var(--g400)'}">${isMtnut?'MTNUT · ':'Confirm · '}${st.when}</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:6px;${labelClr}${isDone?';text-decoration:line-through':''}">${st.label}</div>
+              <div style="font-size:12.5px;font-style:italic;line-height:1.6;margin-bottom:6px;${scriptClr}">${st.script}</div>
+              <div style="font-size:11px;line-height:1.4;${whyClr}">↳ ${st.why}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em">${done}/${steps.length} steps complete</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="height:6px;width:160px;background:var(--g100);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:var(--green);border-radius:3px;transition:width .3s"></div>
+      </div>
+      <span style="font-size:11px;font-weight:700;color:${pct===100?'var(--green)':'var(--g400)'}">${pct}%</span>
+    </div>
+  </div>
+  ${rows}
+  <div class="cf" style="margin-top:6px">
+    <button class="btn" onclick="sv('phase','discover')"${pct<100?' style="opacity:.7"':''}>
+      ${pct===100?'✓ Opening complete — Start Discovery →':'Start Discovery →'}
+    </button>
+  </div>`;
+}
+
+
+// ─── DISCOVER ────────────────────────────────────────────────────────────
+function discoverHTML(){
+  const tabs=[['data','Benefits Data'],['questions','Discovery Questions'],['ichra','ICHRA Questions']];
+  const stabs=`<div class="stabs">${tabs.map(([id,l])=>`
+    <button class="stab${S.dtab===id?' on':''}" onclick="sv('dtab','${id}')">${l}</button>`).join('')}
+  </div>`;
+  const content = S.dtab==='data' ? dataHTML() : S.dtab==='questions' ? questionsHTML() : ichraHTML();
+  return stabs + content + `<div class="cf"><button class="btn" onclick="sv('phase','guide')">Move to Guide →</button></div>`;
+}
+
+function dataHTML(){
+  const iy = S.medOffered==='yes';
+  return `
+  <div class="g2">
+    <div class="card">
+      <div class="sh">Medical coverage</div>
+      <div class="rgroup">
+        <label class="rlbl"><input type="radio" name="mo" value="yes" ${S.medOffered==='yes'?'checked':''} onchange="sv('medOffered','yes')"> Offered</label>
+        <label class="rlbl"><input type="radio" name="mo" value="no"  ${S.medOffered==='no'?'checked':''}  onchange="sv('medOffered','no')"> Not offered</label>
+      </div>
+      ${iy?`
+        ${field('Carrier', inp('carrier',S.carrier,'e.g. Anthem, BCBS'))}
+        ${field('Renewal date', inp('renewal',S.renewal,'MM/YYYY'))}
+        ${field('Current broker', inp('broker',S.broker,''))}
+        <div class="g2">
+          ${field('# Participating', inp('participating',S.participating,'',  'number'))}
+          ${field('ER pays %', inp('erPays',S.erPays,'75%'))}
+          ${field('Deductible', inp('deductible',S.deductible,''))}
+          ${field('OOPM', inp('oopm',S.oopm,''))}
+          ${field('Co-pay', inp('copay',S.copay,''))}
+          ${field('Co-ins', inp('coins',S.coins,''))}
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:5px">
+          ${[['sec125','Sec 125'],['hsa','HSA'],['hra','HRA'],['fsa','FSA']].map(([k,l])=>
+            `<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px">
+              <input type="checkbox" ${S[k]?'checked':''} onchange="sv('${k}',this.checked)" style="accent-color:var(--green)"> ${l}
+            </label>`).join('')}
+        </div>` : ''}
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:11px">
+        <div class="sh">Ancillary benefits</div>
+
+        <!-- Y/N row for all 6 ancillary lines -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:11px">
+          ${[['Dental','dentalyn'],['Vision','visionyn'],['Life','lifeyn'],['LTD','ltdyn'],['STD','stdyn']].map(([l,k])=>`
+            <div style="border:1px solid var(--g200);border-radius:6px;padding:6px 8px;background:${S[k]==='yes'?'var(--g50)':'var(--white)'}">
+              <div style="font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${l}</div>
+              <div style="display:flex;gap:10px">
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;color:${S[k]==='yes'?'var(--green)':'var(--g800)'}">
+                  <input type="radio" name="${k}" value="yes" ${S[k]==='yes'?'checked':''} onchange="sv('${k}','yes')" style="accent-color:var(--green)"> Yes
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;color:${S[k]==='no'?'var(--red,#cc0000)':'var(--g800)'}">
+                  <input type="radio" name="${k}" value="no" ${S[k]==='no'?'checked':''} onchange="sv('${k}','no')" style="accent-color:#cc0000"> No
+                </label>
+              </div>
+            </div>`).join('')}
+        </div>
+
+        <!-- STD detail fields — shown when STD = Yes -->
+        ${S.stdyn==='yes' ? `
+        <div style="border:1px solid var(--g200);border-radius:7px;padding:10px 12px;margin-bottom:10px;background:var(--g50)">
+          <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">STD plan details</div>
+          <div class="g2">
+            ${field('Carrier', inp('std_carrier',S.std_carrier,'e.g. Guardian, Transamerica'))}
+            ${field('% of income covered', selEl('std_pct',S.std_pct,['50%','60%','66.67%','70%']))}
+            ${field('Max weekly benefit', inp('std_maxWeekly',S.std_maxWeekly,'e.g. $1,500/wk'))}
+            ${field('Elimination / wait period', selEl('std_wait',S.std_wait,['0 days (first day)','7 days','14 days','30 days']))}
+            ${field('Benefit length', selEl('std_len',S.std_len,['13 weeks (3 months)','26 weeks (6 months)','52 weeks (12 months)']))}
+            ${field('Definition of disability', selEl('std_def',S.std_def||'',['Own Occupation (any job)','Regular occupation','Any occupation']))}
+          </div>
+          ${field('Funding', selEl('std_fund',S.std_fund,['Employer-paid (noncontributory)','Voluntary / Employee-paid','Contributory (both)']))}
+        </div>` : ''}
+
+        <!-- LTD detail fields — shown when LTD = Yes -->
+        ${S.ltdyn==='yes' ? `
+        <div style="border:1px solid var(--g200);border-radius:7px;padding:10px 12px;background:var(--g50)">
+          <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">LTD plan details</div>
+          <div class="g2">
+            ${field('Carrier', inp('ltdCarrier',S.ltdCarrier,'e.g. Guardian, Unum'))}
+            ${field('Benefit % of income', selEl('ltdPct',S.ltdPct,['50%','60%','66.67%','70%']))}
+            ${field('Max monthly benefit', inp('ltdMax',S.ltdMax,'e.g. $10,000/mo'))}
+            ${field('Elimination period', selEl('ltdElim',S.ltdElim,['30 days','60 days','90 days','180 days','365 days']))}
+            ${field('Benefit duration', selEl('ltdDur',S.ltdDur,['2 years','5 years','10 years','To age 65 / SSNRA']))}
+            ${field('Definition of disability', selEl('ltdDef',S.ltdDef,['Own Occupation','Any Occupation','24-mo Own Occ / Any Occ Thereafter','Own Occ to age 65']))}
+          </div>
+          ${field('Funding', selEl('ltdFund',S.ltdFund,['Employer-paid (noncontributory)','Voluntary / Employee-paid','Contributory (both)']))}
+        </div>` : ''}
+      </div>
+      <div class="card">
+        <div class="sh">Payroll & workforce</div>
+        ${field('Payroll provider', inp('payroll',S.payroll,'ADP, Paychex…'))}
+        ${field('Pay cycle', selEl('payCycle',S.payCycle,['Weekly (52)','Bi-weekly (26)','Semi-monthly (24)','Monthly (12)']))}
+        <div class="g2">
+          ${field('Total EEs', inp('totalEE',S.totalEE,'','number'))}
+          ${field('Tenured 12+ mo', inp('tenured',S.tenured,'','number'))}
+          ${field('Full-time', inp('ft',S.ft,'','number'))}
+          ${field('Part-time', inp('pt',S.pt,'','number'))}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:11px;border-left:3px solid #F5A623;background:var(--g50)">
+    <div style="font-size:12px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">⚡ Bridge Script — transition from data to pain</div>
+    <div style="font-size:12px;color:var(--g600);line-height:1.6;margin-bottom:10px">
+      You’ve captured what they have. Now pivot from facts to feelings. Pick the line that fits what you just learned:
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      ${[
+        [S.medOffered==='yes' && S.erPays && parseInt(S.erPays)>70,
+         'High ER contribution detected',
+         '"You’re paying '+(S.erPays||'__')+'% of those premiums — that’s a significant investment in your team. Has that number been sustainable, or are you feeling the pressure at each renewal?"'],
+        [S.medOffered==='yes' && S.deductible,
+         'Deductible captured',
+         '"Your deductible is '+(S.deductible||'__')+'. When one of your employees hits a major illness, how are they covering that out-of-pocket gap? Has that ever been a problem for anyone on your team?"'],
+        [S.medOffered==='no',
+         'No medical benefits',
+         '"It sounds like you’re not currently offering a benefits program. Help me understand that a little better — is it a cost issue, a complexity issue, or something else that’s held it back?"'],
+        [S.dentalyn==='no' || S.visionyn==='no',
+         'Missing dental or vision',
+         '"One thing I notice is '+(S.dentalyn!=='yes'?'dental':'')+((S.dentalyn!=='yes'&&S.visionyn!=='yes')?' and ':'')+((S.visionyn!=='yes'&&S.dentalyn==='yes')?'vision':'')+(S.visionyn!=='yes'&&S.dentalyn!=='yes'?' aren’t':' isn’t')+' currently offered. Are your employees asking about those benefits? That’s typically one of the top requests I hear."'],
+        [S.ltdyn==='no' || S.stdyn==='no',
+         'No disability coverage',
+         '"I noticed you don’t currently have '+(S.ltdyn!=='yes'&&S.stdyn!=='yes'?'STD or LTD':S.ltdyn!=='yes'?'long-term disability':'short-term disability')+'. If one of your key employees was out for several weeks with an illness or injury — how would your business handle that? Has that situation ever come up?"'],
+        [S.lifeyn==='no',
+         'No life insurance',
+         '"There’s no life insurance currently in the package. If something happened to one of your employees tomorrow — do they have a way to protect their family’s financial situation? That’s something most employees don’t think about until they need it."'],
+        [true,
+         'Universal close (always works)',
+         '"Based on what you just shared — what would you say is the number one thing about your current benefits situation that you wish were different?"'],
+      ].filter(([cond])=>cond).map(([cond,label,script])=>`
+        <div style="padding:8px 10px;background:var(--white);border-radius:6px;border:1px solid var(--g200)">
+          <div style="font-size:10px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">${label}</div>
+          <div style="font-size:12px;color:var(--g600);font-style:italic;line-height:1.55">${script}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:9px;font-size:11px;color:var(--g400);font-style:italic">
+      After they answer — listen completely before saying anything. Let silence work. Then record their exact words below.
+    </div>
+  </div>
+
+  <div class="card gl">
+    <div class="sh">Pain points identified — determines your presentation path in Guide</div>
+    <div class="g2" style="margin-bottom:8px">
+      <div>
+        <label class="lbl">Primary pain point</label>
+        <select class="inp" id="fi_pain1" onchange="sv('pain1',this.value)">
+          <option value="">Select the biggest pain…</option>
+          <optgroup label="Cost & Financial">
+            <option${S.pain1==='Rising premium costs year over year'?' selected':''}>Rising premium costs year over year</option>
+            <option${S.pain1==='Unpredictable renewal increases'?' selected':''}>Unpredictable renewal increases</option>
+            <option${S.pain1==='Had to shift more cost to employees'?' selected':''}>Had to shift more cost to employees</option>
+            <option${S.pain1==='Benefits consuming too much of payroll'?' selected':''}>Benefits consuming too much of payroll</option>
+            <option${S.pain1==='Can\'t afford to offer benefits currently'?' selected':''}>Can't afford to offer benefits currently</option>
+          </optgroup>
+          <optgroup label="Retention & Talent">
+            <option${S.pain1==='High employee turnover'?' selected':''}>High employee turnover</option>
+            <option${S.pain1==='Difficulty attracting qualified talent'?' selected':''}>Difficulty attracting qualified talent</option>
+            <option${S.pain1==='Losing key employees to competitors'?' selected':''}>Losing key employees to competitors</option>
+            <option${S.pain1==='Can\'t compete with larger companies\' benefits'?' selected':''}>Can't compete with larger companies' benefits</option>
+          </optgroup>
+          <optgroup label="Administration">
+            <option${S.pain1==='Benefits admin taking too much time'?' selected':''}>Benefits admin taking too much time</option>
+            <option${S.pain1==='Manual open enrollment process'?' selected':''}>Manual open enrollment process</option>
+            <option${S.pain1==='Low employee participation or understanding'?' selected':''}>Low employee participation or understanding</option>
+            <option${S.pain1==='Managing multiple carriers is complicated'?' selected':''}>Managing multiple carriers is complicated</option>
+          </optgroup>
+          <optgroup label="Coverage Gaps">
+            <option${S.pain1==='No disability coverage (STD/LTD)'?' selected':''}>No disability coverage (STD/LTD)</option>
+            <option${S.pain1==='No life insurance offered'?' selected':''}>No life insurance offered</option>
+            <option${S.pain1==='No dental or vision coverage'?' selected':''}>No dental or vision coverage</option>
+            <option${S.pain1==='No voluntary benefits available'?' selected':''}>No voluntary benefits available</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">Secondary pain point</label>
+        <select class="inp" id="fi_pain2" onchange="sv('pain2',this.value)">
+          <option value="">Select a secondary pain…</option>
+          <optgroup label="Cost & Financial">
+            <option${S.pain2==='Rising premium costs year over year'?' selected':''}>Rising premium costs year over year</option>
+            <option${S.pain2==='Unpredictable renewal increases'?' selected':''}>Unpredictable renewal increases</option>
+            <option${S.pain2==='Had to shift more cost to employees'?' selected':''}>Had to shift more cost to employees</option>
+            <option${S.pain2==='Benefits consuming too much of payroll'?' selected':''}>Benefits consuming too much of payroll</option>
+            <option${S.pain2==='Can\'t afford to offer benefits currently'?' selected':''}>Can't afford to offer benefits currently</option>
+          </optgroup>
+          <optgroup label="Retention & Talent">
+            <option${S.pain2==='High employee turnover'?' selected':''}>High employee turnover</option>
+            <option${S.pain2==='Difficulty attracting qualified talent'?' selected':''}>Difficulty attracting qualified talent</option>
+            <option${S.pain2==='Losing key employees to competitors'?' selected':''}>Losing key employees to competitors</option>
+            <option${S.pain2==='Can\'t compete with larger companies\' benefits'?' selected':''}>Can't compete with larger companies' benefits</option>
+          </optgroup>
+          <optgroup label="Administration">
+            <option${S.pain2==='Benefits admin taking too much time'?' selected':''}>Benefits admin taking too much time</option>
+            <option${S.pain2==='Manual open enrollment process'?' selected':''}>Manual open enrollment process</option>
+            <option${S.pain2==='Low employee participation or understanding'?' selected':''}>Low employee participation or understanding</option>
+          </optgroup>
+          <optgroup label="Coverage Gaps">
+            <option${S.pain2==='No disability coverage (STD/LTD)'?' selected':''}>No disability coverage (STD/LTD)</option>
+            <option${S.pain2==='No life insurance offered'?' selected':''}>No life insurance offered</option>
+            <option${S.pain2==='No dental or vision coverage'?' selected':''}>No dental or vision coverage</option>
+            <option${S.pain2==='No voluntary benefits available'?' selected':''}>No voluntary benefits available</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <label class="lbl">Additional notes / their exact words</label>
+    <textarea class="inp" id="fi_notes" placeholder="Capture their language here — the more detail the better for path detection…" onblur="sfBlur('notes',this.value)">${e(S.notes)}</textarea>
+  </div>`;
+}
+
+
+// ── Smart question scoring ─────────────────────────────────────────────────
+
+function scoreQuestions(){
+  const d = S;
+  const hasMed   = d.medOffered === 'yes';
+  const noMed    = d.medOffered === 'no';
+  const hasLTD   = d.ltdyn === 'yes';
+  const hasSTD   = d.stdyn === 'yes';
+  const noDisab  = !hasLTD && !hasSTD;
+  const dataIn   = d.medOffered !== '';
+
+  const scores = {};
+  const reasons = {};
+  function set(n, status, reason){ scores[n]=status; reasons[n]=reason; }
+
+  // Universal questions — always show
+  set(1,  'hot',      'Always — business context sets everything up');
+  set(2,  'hot',      'Always — surfaces the #1 talent pain in their own words');
+  set(3,  hasMed ? 'hot' : 'relevant', hasMed ? 'They have benefits — find out if cost is the top burden' : 'Good financial pain opener');
+  set(4,  'hot',      'Always — headcount changes = benefits eligibility changes');
+  set(8,  'hot',      'Always — makes them quantify the real cost of losing someone');
+  set(9,  'hot',      'Always — surfaces retention reality and tenure');
+  set(10, 'hot',      'Always — forces the math on turnover cost');
+  set(12, 'hot',      'Always — future-state urgency. Never manufactured.');
+
+  // Conditional on medical offered
+  set(5,  noMed  ? 'hot'  : 'skip', noMed  ? 'No benefits — uncover the real barrier (cost vs. complexity vs. size)' : 'Skip — they already offer benefits');
+  set(6,  hasMed ? 'hot'  : 'skip', hasMed ? 'Benefits exist — find out what changed and if it is sustainable' : 'Skip — no benefits program to ask about');
+  set(7,  hasMed ? (d.dentalyn&&d.visionyn ? 'relevant':'hot') : 'skip',
+          hasMed ? 'Benefits exist — communication and participation gaps are almost always there' : 'Skip — no benefits to communicate');
+
+  // STD/LTD dependent
+  set(11, noDisab ? 'hot' : 'relevant',
+          noDisab ? 'No STD or LTD in place — this opens the disability conversation naturally' : 'Useful even with disability — connects to productivity impact');
+
+  return { scores, reasons, dataIn };
+}
+
+// ── ICHRA question scoring — driven entirely by benefits data ───────────────
+
+function scoreICHRA(){
+  const d = S;
+  const noMed      = d.medOffered === 'no';
+  const hasMed     = d.medOffered === 'yes';
+  const dataIn     = d.medOffered !== '';
+  const small      = parseInt(d.totalEE||0) > 0 && parseInt(d.totalEE||0) < 15;
+  const hiring     = parseInt(d.ft||0) > 0 || parseInt(d.pt||0) > 0;
+  const hasPartTime= parseInt(d.pt||0) > 0;
+  const participating = parseInt(d.participating||0);
+  const totalEE    = parseInt(d.totalEE||0);
+  const pctPartic  = (participating > 0 && totalEE > 0) ? (participating/totalEE) : null;
+  const lowPartic  = pctPartic !== null && pctPartic < 0.75;
+  const highCost   = /cost|increas|shift|afford|premium|expens|too much|hurt/.test((d.pain1+d.pain2+d.notes).toLowerCase());
+  const retentionPain = /turn|retain|leave|quit|compet|attract|hire|talent/.test((d.pain1+d.pain2+d.notes).toLowerCase());
+  const diverseWF  = hasPartTime || (d.ft && d.pt && parseInt(d.ft) !== parseInt(d.totalEE));
+
+  const scores = {};
+  const reasons = {};
+  function set(n, status, reason){ scores[n]=status; reasons[n]=reason; }
+
+  if (!dataIn) {
+    // No data entered yet — show all as unscored
+    [1,2,3,4,5,6,7,8].forEach(n => set(n,'unscored','Complete Benefits Data first to see which questions apply'));
+    return { scores, reasons, dataIn };
+  }
+
+  // Q1 — Fixed budget / no renewal surprise
+  if (noMed || highCost) set(1,'hot', noMed ? 'No benefits — cost certainty is the core ICHRA pitch' : 'Cost pain detected — budget predictability is your lead');
+  else set(1,'relevant','Good opener regardless — cost control resonates with most employers');
+
+  // Q2 — "If cost/complexity off the table, would you want coverage?"
+  if (noMed) set(2,'hot','No benefits — reframes the conversation: if cost were off the table, would you want them covered?');
+  else set(2,'skip','Skip — they already offer benefits');
+
+  // Q3 — Portability / employees keep plan when they leave
+  if (noMed || retentionPain) set(3,'hot', retentionPain ? 'Retention pain detected — portability reduces COBRA friction for departing employees' : 'No benefits — portability is a key competitive advantage');
+  else set(3,'relevant','Worth asking — portability differentiates ICHRA from group plans for any employer');
+
+  // Q4 — Special Enrollment Period
+  if (noMed || (dataIn && parseInt(d.totalEE||0) > 0)) set(4,'hot', noMed ? 'No benefits — SEP solves the when can new hires enroll problem immediately' : 'Active hiring — SEP means new hires can enroll any time, not just open enrollment');
+  else set(4,'relevant','SEP is always worth mentioning — most employers have never heard this');
+
+  // Q5 — Tax credit stacking
+  if (noMed || small) set(5,'hot', small ? 'Small group (under 15) — tax credit stacking can make ICHRA dramatically affordable for their employees' : 'No benefits — premium tax credits on top of ICHRA contribution is often a game-changer');
+  else set(5,'relevant','Still worth raising — tax credit awareness is low even among employers with existing benefits');
+
+  // Q6 — Participation waste
+  if (hasMed) {
+    if (lowPartic) set(6,'hot',`Low participation detected (${Math.round((pctPartic||0)*100)}% enrolled) — they are funding coverage employees are not using`);
+    else if (participating === 0) set(6,'hot','No participation data entered — ask directly, this surfaces waste quickly');
+    else set(6,'relevant','They have medical — participation efficiency is worth checking');
+  } else {
+    set(6,'skip','Skip — no group plan to ask about');
+  }
+
+  // Q7 — One-size-fits-all / plan personalization
+  if (hasMed && diverseWF) set(7,'hot','Mixed FT/PT workforce — diverse employees almost never fit one group plan well');
+  else if (hasMed) set(7,'relevant','They have medical — personalization gap is worth surfacing');
+  else set(7,'skip','Skip — no group plan to critique');
+
+  // Q8 — Cap spend / budget certainty
+  if (hasMed && highCost) set(8,'hot','Cost pain + active benefits = strongest ICHRA pitch. Budget certainty replaces renewal anxiety directly');
+  else if (hasMed) set(8,'relevant','They have medical — locking in cost predictability is always relevant at renewal time');
+  else set(8,'skip','Skip — no renewal pressure to pivot from');
+
+  return { scores, reasons, dataIn };
+}
+
+function questionsHTML(){
+  const {scores, reasons} = scoreQuestions();
+  const hot      = DQS.filter(q=>scores[q.n]==='hot');
+  const relevant = DQS.filter(q=>scores[q.n]==='relevant');
+  const skipped  = DQS.filter(q=>scores[q.n]==='skip');
+  const filledCount = DQS.filter(q=>(S.qNotes[q.n]||'').trim()).length;
+  const dataEntered = S.medOffered !== '';
+
+  function qCard(q, status){
+    const note = (S.qNotes[q.n]||'').trim();
+    const filled = note.length>0;
+    const isHot = status==='hot';
+    const isSki = status==='skip';
+    const numBg  = isHot ? 'var(--green)' : isSki ? 'var(--g200)' : 'var(--g300,#ccc)';
+    const numClr = isHot ? '#000' : 'var(--g600)';
+    const hdBg   = filled ? '#e8fbe8' : isHot ? '#f5fdf5' : 'var(--g50)';
+    const opacity = isSki ? 'opacity:.45' : '';
+    return `
+    <div class="qcard${filled?' filled':''}" style="${opacity}">
+      <div class="qhead" style="background:${hdBg}">
+        <div class="qnum" style="background:${numBg};color:${numClr}">${q.n}</div>
+        <div style="flex:1">
+          <div class="qtxt">${q.q}</div>
+          <div class="qhint">→ ${q.h}</div>
+          <div style="font-size:10px;font-weight:700;color:${isHot?'var(--green)':isSki?'var(--g400)':'var(--g400)'};margin-top:3px;text-transform:uppercase;letter-spacing:.04em">
+            ${isHot?'🔥 Recommended based on your data':''}${status==='relevant'?'📋 Optional':''}${isSki?'⏭ Likely not applicable — skip unless relevant':''}
+          </div>
+          ${reasons[q.n]?`<div style="font-size:10px;color:var(--g400);font-style:italic">${reasons[q.n]}</div>`:''}
+        </div>
+      </div>
+      <div class="qbody">
+        <textarea class="note-inp" rows="2"
+          placeholder="${isSki?'Skipped — type a note here if it comes up anyway…':'Type their response or your observations…'}"
+          onblur="sqBlur(${q.n},this.value)"
+        >${e(note)}</textarea>
+      </div>
+    </div>`;
+  }
+
+  const noDataMsg = !dataEntered ? `<div class="ibar" style="border-left:3px solid var(--amber,#F5A623)">
+    <strong>Complete the Benefits Data tab first</strong> — the questions below will be automatically sorted by what\'s most relevant to this employer\'s situation once you enter their coverage details.
+  </div>` : '';
+
+  return `
+  ${noDataMsg}
+  <div class="ibar">
+    Questions are sorted by relevance based on the benefits data you entered.
+    ${filledCount>0?`<strong style="color:var(--green)"> ${filledCount} noted.</strong>`:''}
+    ${dataEntered && hot.length>0 ? `<strong style="color:var(--green)"> ${hot.length} high-priority questions identified.</strong>` : ''}
+  </div>
+
+  ${hot.length>0?`<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;padding:6px 0 7px;border-bottom:2px solid var(--green);margin-bottom:9px">
+    🔥 Ask these first — recommended for this employer (${hot.length})
+  </div>
+  ${hot.map(q=>qCard(q,'hot')).join('')}`:''}
+
+  ${relevant.length>0?`<div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 7px;border-bottom:1px solid var(--g200);margin-bottom:9px;margin-top:6px">
+    📋 Use if conversation warrants it (${relevant.length})
+  </div>
+  ${relevant.map(q=>qCard(q,'relevant')).join('')}`:''}
+
+  ${skipped.length>0?`<details style="margin-top:10px">
+    <summary style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;cursor:pointer;padding:6px 0">
+      ⏭ Skipped questions — not applicable based on data (${skipped.length}) ▸
+    </summary>
+    <div style="margin-top:7px">${skipped.map(q=>qCard(q,'skip')).join('')}</div>
+  </details>`:''}`;
+}
+
+function ichraHTML(){
+  const {scores, reasons, dataIn} = scoreICHRA();
+  const hot      = IQS.filter(q=>scores[q.n]==='hot');
+  const relevant = IQS.filter(q=>scores[q.n]==='relevant');
+  const skipped  = IQS.filter(q=>scores[q.n]==='skip');
+  const unscored = IQS.filter(q=>scores[q.n]==='unscored');
+  const filled   = IQS.filter(q=>(S.qNotes['i'+q.n]||'').trim().length>0).length;
+
+  function iCard(q, status){
+    const note  = (S.qNotes['i'+q.n]||'').trim();
+    const isFilled = note.length > 0;
+    const isHot = status==='hot';
+    const isSki = status==='skip';
+    const isUns = status==='unscored';
+    const bg  = isFilled ? '#e8fbe8' : isHot ? '#f5fdf5' : 'var(--g50)';
+    const numBg = isHot ? 'var(--black,#000)' : isSki||isUns ? 'var(--g200)' : 'var(--g300,#ccc)';
+    const numClr= isHot ? 'var(--green)' : 'var(--g600)';
+    const opac  = isSki ? 'opacity:.4' : '';
+    const signalText = q.signals ? `<div style="font-size:10px;color:${isHot?'var(--green)':'var(--g400)'};margin-top:2px;font-weight:600">${isHot?'🔥 HOT for this employer: '+reasons[q.n]: status==='relevant'?'📋 Relevant: '+reasons[q.n]: status==='skip'?'⏭ '+reasons[q.n]:''}</div>` : '';
+    const whenText = q.hotWhen ? `<div style="font-size:10px;color:var(--g400);font-style:italic;margin-top:1px">When to use: ${q.hotWhen}</div>` : '';
+    return `
+    <div class="qcard${isFilled?' filled':''}" style="${opac}">
+      <div class="qhead" style="background:${bg}">
+        <div class="qnum" style="background:${numBg};color:${numClr}">${q.n}</div>
+        <div style="flex:1">
+          <div class="qtxt">${q.q}</div>
+          <div class="qhint">→ ${q.h}</div>
+          ${signalText}
+          ${whenText}
+        </div>
+      </div>
+      <div class="qbody">
+        <textarea class="note-inp" rows="2"
+          placeholder="${isSki?'Skipped based on benefits data — type here if it comes up…':'Their response or your observation…'}"
+          onblur="sqBlur('i${q.n}',this.value)"
+        >${e(note)}</textarea>
+      </div>
+    </div>`;
+  }
+
+  const noDataBanner = !dataIn ? `<div class="ibar" style="border-left:3px solid var(--amber,#F5A623)">
+    <strong>Enter Benefits Data first.</strong> ICHRA questions are ranked and filtered based on whether the employer has medical coverage, their group size, participation rate, and pain points. The questions will sort automatically once you fill in the data.
+  </div>` : `<div class="ibar">
+    ICHRA questions ranked by relevance to <strong>this employer's specific data</strong>.
+    ${hot.length>0?`<strong style="color:var(--green)"> ${hot.length} high-priority questions identified.</strong>`:''}
+    ${filled>0?` <strong style="color:var(--green)">${filled} noted.</strong>`:''}
+  </div>`;
+
+  return `
+  ${noDataBanner}
+
+  ${hot.length>0?`
+  <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;padding:6px 0 7px;border-bottom:2px solid var(--green);margin-bottom:9px">
+    🔥 Lead with these — most relevant for this employer (${hot.length})
+  </div>
+  ${hot.map(q=>iCard(q,'hot')).join('')}`:''}
+
+  ${relevant.length>0?`
+  <div style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 7px;border-bottom:1px solid var(--g200);margin-bottom:9px;margin-top:6px">
+    📋 Raise if conversation warrants it (${relevant.length})
+  </div>
+  ${relevant.map(q=>iCard(q,'relevant')).join('')}`:''}
+
+  ${skipped.length>0?`
+  <details style="margin-top:10px">
+    <summary style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;cursor:pointer;padding:6px 0">
+      ⏭ Not applicable based on benefits data (${skipped.length}) ▸
+    </summary>
+    <div style="margin-top:7px">${skipped.map(q=>iCard(q,'skip')).join('')}</div>
+  </details>`:''}
+
+  ${unscored.length>0 ? unscored.map(q=>iCard(q,'unscored')).join('') : ''}`;
+}
+
+
+// ─── GUIDE ───────────────────────────────────────────────────────────────
+function guideHTML(){
+  const dp = detectPath();
+  const ap = S.selPath || dp;
+  const p  = ap ? PATHS[ap] : null;
+  const pc = p ? p.color : '#0ACE0A';
+  const gaps = buildGaps();
+
+  const banner = dp ? `
+    <div class="dbanner" style="background:${PATHS[dp].color}12;border-color:${PATHS[dp].color}40">
+      <div class="dlbl">Recommended path — based on your discovery notes</div>
+      <div class="drow">
+        <span class="badge" style="background:${PATHS[dp].color}">${PATHS[dp].label}</span>
+        <span class="dtitle">${PATHS[dp].title}</span>
+        <span class="dlead" style="color:${PATHS[dp].color}">→ ${PATHS[dp].lead}</span>
+      </div>
+    </div>` : '';
+
+  // Signals
+  const sigs = ap ? buildSignals(ap) : [];
+  const sigBox = sigs.length ? `
+    <div class="signals" style="background:${pc}0f;border-color:${pc}30;margin-bottom:13px">
+      <div class="sh" style="border-color:${pc}30">Signals from your notes that drove this path</div>
+      ${sigs.map(s=>`
+        <div class="sig-row">
+          <span class="sig-tag" style="background:${pc}">${s.src}</span>
+          <span class="sig-txt">"${e(s.text)}"</span>
+        </div>`).join('')}
+    </div>` : (ap ? `<div class="ibar" style="margin-bottom:13px">No notes yet — add responses in the Discover tab to see what drove this path recommendation.</div>` : '');
+
+  const pathGrid = `
+    <div class="sh">Select presentation path</div>
+    <div class="pgrid">
+      ${Object.entries(PATHS).map(([key,path])=>`
+        <button class="pcard${ap===key?' on':''}" style="--pc:${path.color};${ap===key?`border-color:${path.color};background:${path.color}12`:''}" onclick="sv('selPath','${key}')">
+          <div class="phdr">
+            <span class="pbadge" style="background:${path.color}">${path.label}</span>
+            <span class="ptitle">${path.title}</span>
+          </div>
+          <div class="plead">${path.lead}</div>
+        </button>`).join('')}
+    </div>`;
+
+  let pathContent = '';
+  if (ap && p) {
+    const pain = (S.pain1||S.pain2) ? `"So your main concerns are ${S.pain1?`"${e(S.pain1)}"`:''} ${S.pain1&&S.pain2?'and':''} ${S.pain2?`"${e(S.pain2)}"`:''}. Did I understand that correctly?"` : '';
+    const cars = CARRIERS[ap] || [];
+
+    pathContent = `
+      <div class="card gl" style="border-left-color:${pc};margin-bottom:13px">
+        <div style="font-size:13px;color:var(--g600);line-height:1.6;margin-bottom:${pain?'9px':'0'}">${PATH_DESC[ap]}</div>
+        ${pain?`<div style="font-size:12px;color:var(--g400);font-style:italic;padding:7px;background:var(--g50);border-radius:6px;margin-top:7px">
+          Bridge: <span style="color:var(--g800)">${pain}</span>
+        </div>`:''}
+      </div>
+
+      ${gaps.length ? `
+      <div style="font-size:11px;font-weight:700;color:var(--red,#cc3300);text-transform:uppercase;letter-spacing:.07em;padding:6px 0 7px;border-bottom:2px solid #fcc;margin-bottom:9px">
+        Coverage gaps identified from benefits data (${gaps.length})
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:14px">
+        ${gaps.map(g=>`<div style="border:1px solid ${g.color}40;border-left:3px solid ${g.color};border-radius:7px;padding:10px 12px;background:${g.color}08">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;background:${g.color};color:#000">${g.priority==='critical'?'CRITICAL':'GAP'}</span>
+            <span style="font-size:12px;font-weight:700;color:var(--g800)">${g.label}</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:${g.color};margin-bottom:4px">${g.carrier} \u2014 ${g.product}</div>
+          <div style="font-size:11px;color:var(--g500);line-height:1.5">${g.desc}</div>
+        </div>`).join('')}
+      </div>` : ''}
+
+      <div class="sh">Recommended carriers & solutions for ${PATHS[ap].label}</div>
+      <div class="cgrid">
+        ${cars.map(c=>`
+          <div class="ccard" style="border-top-color:${c.badge||pc}">
+            <div class="cname">${c.name}</div>
+            <div class="ctype" style="color:${c.badge||pc}">${c.type}</div>
+            <div style="font-size:12px;color:var(--g500);line-height:1.55;font-style:italic;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--g100)">${c.highlight||''}</div>
+            <ul style="margin:0;padding:0 0 0 13px;font-size:10.5px;color:var(--g500);line-height:1.7">
+              ${(c.products||[]).map(pp=>'<li>'+pp+'</li>').join('')}
+            </ul>
+            ${c.useCase?'<div style="margin-top:7px;padding:4px 7px;background:var(--g50);border-radius:4px;font-size:10px;color:var(--g400);font-weight:600;font-style:italic">USE WHEN: '+c.useCase+'</div>':''}
+          </div>`).join('')}
+      </div>
+
+      <div class="sh" style="margin-top:4px">Additional carriers available across all paths</div>
+      <div class="cgrid" style="margin-bottom:13px">
+        ${CARRIER_LIBRARY.map(c=>`
+          <div class="ccard" style="border-top-color:${c.badge}">
+            <div class="cname">${c.name}</div>
+            <div class="ctype" style="color:${c.badge}">${c.type}</div>
+            <div style="font-size:12px;color:var(--g500);line-height:1.5;font-style:italic;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--g100)">${c.highlight}</div>
+            <ul style="margin:0;padding:0 0 0 13px;font-size:10.5px;color:var(--g500);line-height:1.7">
+              ${(c.products||[]).map(pp=>'<li>'+pp+'</li>').join('')}
+            </ul>
+            ${c.useCase?'<div style="margin-top:6px;padding:4px 7px;background:var(--g50);border-radius:4px;font-size:10px;color:var(--g400);font-weight:600;font-style:italic">USE WHEN: '+c.useCase+'</div>':''}
+          </div>`).join('')}
+      </div>
+
+      <div class="card tint">
+        <div class="sh">Three options to present</div>
+        ${[
+          ['Employer-sponsored','Company directly funds specific benefit products. Best for employers committed to a robust, competitive package that signals investment in their people.'],
+          ['Defined contribution','Employer sets a fixed monthly amount per employee. Employees choose their own plan. Predictable cost, zero renewal surprises — ICHRA model.'],
+          ['Voluntary benefits','Benefits at group rates, 100% employee-funded through payroll deduction. Zero direct ER cost — expands the offering with no new employer spend.'],
+        ].map(([t,d],i)=>`
+          <div class="orow">
+            <div class="onum">${i+1}</div>
+            <div><div class="otitle">${t}</div><div class="odesc">${d}</div></div>
+          </div>`).join('')}
+        <div style="margin-top:9px;padding:8px;background:var(--white);border-radius:6px;font-size:12px;color:var(--g400);font-style:italic">
+          "To move forward there are 3 options — [1] employer buys for each employee, [2] employer makes a defined contribution, or [3] employer simply makes benefits available through payroll deduction at no direct cost. Which scenario fits your company best?"
+        </div>
+      </div>`;
+  }
+
+  return banner + sigBox + pathGrid + pathContent + `<div class="cf"><button class="btn" onclick="sv('phase','execute')">Move to Execute →</button></div>`;
+}
+
+// ─── EXECUTE ─────────────────────────────────────────────────────────────
+function executeHTML(){
+  const company = (document.getElementById('fi_company')||{}).value || '';
+  const ap = S.selPath || detectPath();
+  const p  = ap ? PATHS[ap] : null;
+
+  const summary = (company||S.pain1||ap) ? `
+    <div class="card gl" style="margin-top:12px">
+      <div class="sh">Meeting summary${company?' — '+e(company):''}</div>
+      <div class="srow">
+        ${ap&&p?`<div><strong>Recommended path:</strong> ${p.label} — ${p.lead}</div>`:''}
+        ${S.pain1?`<div><strong>Primary pain:</strong> ${e(S.pain1)}</div>`:''}
+        ${S.pain2?`<div><strong>Secondary pain:</strong> ${e(S.pain2)}</div>`:''}
+        ${S.totalEE?`<div><strong>Group size:</strong> ${e(S.totalEE)} employees</div>`:''}
+        ${S.carrier&&S.medOffered==='yes'?`<div><strong>Current carrier:</strong> ${e(S.carrier)}${S.renewal?' · Renewal: '+e(S.renewal):''}</div>`:''}
+        ${S.medOffered==='no'?`<div class="shighlight">→ No current benefits — strong ICHRA / voluntary opportunity</div>`:''}
+        ${S.nextDate?`<div><strong>Next meeting:</strong> ${new Date(S.nextDate+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>`:''}
+      </div>
+    </div>` : '';
+
+  return `
+  <div class="egrid">
+    <div class="card">
+      <div class="sh">Execute checklist</div>
+      ${[
+        ['app',    'Employer Application completed (15–20 min)'],
+        ['census', 'Census collected or scheduled'],
+        ['preComm','Pre-enrollment communication strategy agreed'],
+        ['followup','Follow-up meeting booked — calendar confirmed'],
+      ].map(([k,t])=>`
+        <label class="chkrow${S.ec[k]?' done':''}">
+          <input type="checkbox" ${S.ec[k]?'checked':''} onchange="se('${k}',this.checked)" style="accent-color:var(--green);width:14px;height:14px;flex-shrink:0">
+          <span>${t}</span>
+        </label>`).join('')}
+      <div style="margin-top:11px">
+        ${field('Enrollment date', `<input class="inp" type="date" value="${e(S.enrollDate)}" onchange="sv('enrollDate',this.value)">`)}
+        ${field('Best way to reach employees', inp('contactMethod',S.contactMethod,'e.g. Monday all-hands'))}
+        ${field('Next meeting date', `<input class="inp" type="date" value="${e(S.nextDate)}" onchange="sv('nextDate',this.value)">`)}
+      </div>
+    </div>
+    <div class="card">
+      <div class="sh">Objection responses</div>
+      ${[
+        ['"We can\'t afford benefits"',   '"83% of new ICHRA adopters had never offered benefits — they thought they couldn\'t. Let me show you what zero-to-low cost actually looks like."'],
+        ['"Our employees don\'t want it"','"68% of employees without voluntary life say they would buy it if offered. Most don\'t ask because they assume it isn\'t available."'],
+        ['"We already have a broker"',    '"I\'m not here to replace that relationship — I\'m here to show you what\'s possible with tools most brokers don\'t have. If the outcome is better, the relationship tends to follow."'],
+        ['"I need to think about it"',   '"Absolutely. What specifically? I can schedule our follow-up around that one question."'],
+      ].map(([obj,resp])=>`
+        <div class="oitem">
+          <div class="oq">${obj}</div>
+          <div class="oa">${resp}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+  ${summary}
+  <div style="margin-top:20px;padding-top:16px;border-top:2px solid var(--green);text-align:center">
+    <div style="font-size:12px;color:var(--g400);margin-bottom:10px">All done? Generate a meeting summary and email it to yourself or the employer contact.</div>
+    <button onclick="sv('phase','finish')" style="background:var(--green);color:#000;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.02em">
+      &#10003;&nbsp; Finish &amp; Save Meeting Summary
+    </button>
+  </div>
+`;
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
